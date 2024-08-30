@@ -1,146 +1,124 @@
-<script setup>
+
+<template>
+  <div class="login-page">
+    <h1 class="site-title">MindCare Hub</h1>
+    <div class="login-container">
+      <h2>Log Into Your Account</h2>
+      <form @submit.prevent="login">
+        <input v-model="userId" type="text" placeholder="User ID" required>
+        <p class="forgot-link">FORGOT USER ID?</p>
+        <button type="submit" class="next-button">NEXT</button>
+      </form>
+      <div class="social-login">
+        <button @click="loginWithGoogle" class="google-btn">
+          <i class="fab fa-google"></i> Continue with Google
+        </button>
+        <button @click="loginWithFacebook" class="facebook-btn">
+          <i class="fab fa-facebook"></i> Continue with Facebook
+        </button>
+      </div>
+      <p class="register-link">
+        Don't have an Account? <a href="/register">Register now!</a>
+      </p>
+    </div>
+    <footer-component></footer-component>
+  </div>
+</template>
+
+<script>
 import { ref } from 'vue'
 import router from '../router/index';
 import { useAuthentication } from '../router/authentication'
+import FooterComponent from '../components/FooterComponent.vue'
 
-const hardcodeUsername = 'Jay'
-const hardcodePassword = 'Aa12345!'
-const { isAuthentication, login } = useAuthentication()
-const formData = ref({
-  username: '',
-  password: '',
-})
+export default {
+  name: 'LoginPage',
+  components: {
+    FooterComponent
+  },
+  setup() {
+    const userId = ref('')
 
-const submittedCards = ref([])
+    const login = () => {
+      // Implement login logic here
+      console.log('Logging in with User ID:', userId.value)
+    }
 
-const submitForm = () => {
-  validateName(true)
-  validatePassword(true)
-  if (!errors.value.username && !errors.value.password 
-    && formData.value.username === hardcodeUsername 
-    && formData.value.password === hardcodePassword) {
-      alert('Login success')
-      login() // Set isAuthentication to true
-      router.push({ name: 'About' }) // Redirect to About page
-  } else {
-    alert('Incorrect username or password')
-  }
-}
+    const loginWithGoogle = () => {
+      // Implement Google login logic
+      console.log('Logging in with Google')
+    }
 
-const errors = ref({
-  username: null,
-  password: null,
-})
+    const loginWithFacebook = () => {
+      // Implement Facebook login logic
+      console.log('Logging in with Facebook')
+    }
 
-const validateName = (blur) => {
-  if (formData.value.username.length < 3) {
-    if (blur) errors.value.username = 'Name must be at least 3 characters'
-  } else {
-    errors.value.username = null
-  }
-}
-
-const validatePassword = (blur) => {
-  const password = formData.value.password
-  const minLength = 8
-  const hasUppercase = /[A-Z]/.test(password)
-  const hasLowercase = /[a-z]/.test(password)
-  const hasNumber = /\d/.test(password)
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
-
-  if (password.length < minLength) {
-    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
-  } else if (!hasUppercase) {
-    if (blur) errors.value.password = 'Password must contain at least one uppercase letter.'
-  } else if (!hasLowercase) {
-    if (blur) errors.value.password = 'Password must contain at least one lowercase letter.'
-  } else if (!hasNumber) {
-    if (blur) errors.value.password = 'Password must contain at least one number.'
-  } else if (!hasSpecialChar) {
-    if (blur) errors.value.password = 'Password must contain at least one special character.'
-  } else {
-    errors.value.password = null
+    return {
+      userId,
+      login,
+      loginWithGoogle,
+      loginWithFacebook
+    }
   }
 }
 </script>
 
-
-<template>
-  <div class="container mt-5">
-    <div class="row">
-      <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">🗄️ W5. Login Form</h1>
-        <form @submit.prevent="submitForm">
-          <div class="row mb-3 offset-md-4">
-            <div class="col-md-6 col-sm-6">
-              <label for="username" class="form-label">Username</label>
-              <input
-                type="text"
-                class="form-control"
-                id="username"
-                @blur="() => validateName(true)"
-                @input="() => validateName(false)"
-                v-model="formData.username"
-              />
-              <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
-            </div>
-          </div>
-          <div class="row mb-3 offset-md-4">
-            <div class="col-md-6 col-sm-6">
-              <label for="password" class="form-label">Password</label>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                @blur="() => validatePassword(true)"
-                @input="() => validatePassword(false)"
-                v-model="formData.password"
-              />
-              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
-            </div>
-          </div>
-          <div class="text-center">
-            <button type="submit" class="btn btn-primary me-2">Submit</button>
-            <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style scoped>
-.container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 80vw;
+.login-page {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  /* background-color: #e0bfbf; */
-  border-radius: 10px;
 }
 
-/* Class selectors */
-.form {
-  text-align: center;
-  margin-top: 50px;
+.site-title {
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
-/* ID selectors */
-#username:focus,
-#password:focus,
-#isAustralian:focus,
-.card {
+.login-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 }
-.card-header {
-  background-color: #275fda;
-  color: white;
-  padding: 10px;
-  border-radius: 10px 10px 0 0;
+
+.forgot-link {
+  color: red;
+  text-align: right;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
-.list-group-item {
+
+.next-button {
+  width: 100%;
   padding: 10px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.social-login button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
