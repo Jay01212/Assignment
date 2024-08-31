@@ -1,11 +1,11 @@
 <script setup>
-import BHeader from './components/Navigation.vue'
+import Navigation from './components/Navigation.vue'
 import LibraryRegistrationForm from './views/HomeView.vue'
 </script>
 
 <template>
   <header>
-    <BHeader />
+    <Navigation />
   </header>
 
   <main>
