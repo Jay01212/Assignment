@@ -1,27 +1,37 @@
 <template>
   <div class="home">
-    <!-- Header Section -->
-    <header class="header-section">
-      <div class="container">
-        <h1>My mental health</h1>
-      </div>
-    </header>
-
     <!-- Main Content Section -->
-    <section class="main-content container">
-      <h2>Local services directory and online support</h2>
-      <p>
-        The following service guide includes services available for
-        <strong>everyone</strong> (regardless of age or circumstance) as well
-        as for <a href="#">families</a>, <a href="#">young people</a>, <a href="#">men</a>, <a href="#">LGBTIQ+ people</a>, <a href="#">Aboriginal and Torres Strait Islander people</a>, <a href="#">people from migrant and refugee backgrounds and those seeking asylum</a>, and <a href="#">carers</a>.
-      </p>
-      <p>
-        All services provide confidential support and are legally obliged to protect your privacy and handle your information with care. Many are free or low-cost. Please contact the service directly to find out if it is suitable for you.
-      </p>
-      <p>
-        For more detail about specific services in your local area visit <a href="#">healthdirect.gov.au</a>. You can also find state-wide phone and online mental health services at <a href="#">health.vic.gov.au</a>.
-      </p>
-    </section>
+    <div class="main-content container">
+      <div class="image-container">
+        <img src="../images/homepage1.png" alt="Mental Health Image">
+        <div class="overlay-text">Your Mental Health Matters</div> <!-- Overlay Text -->
+        <div class="search-bar">
+          <input type="text" placeholder="Search..." />
+          <button type="button">Search</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="domain-search-section">
+      <h2>FIND YOUR MENTAL HEALTH RESOURCE</h2>
+      <div class="domain-options">
+        <div class="domain-card">
+          <h3>Mentalhealth Library</h3>
+          <p>Create a comprehensive resource for mental health information and support.</p>
+          <router-link to="/mentalhealth-library" class="read-more-button">Read More</router-link> <!-- Router Link -->
+        </div>
+        <div class="domain-card">
+          <h3>List of psychotherapists</h3>
+          <p>Perfect for therapists, counselors, and mental health professionals offering services.</p>
+          <router-link to="/psychotherapists-list" class="read-more-button">Read More</router-link> <!-- Router Link -->
+        </div>
+        <div class="domain-card">
+          <h3>Community</h3>
+          <p>Ideal for creating supportive communities and resources for mental well-being.</p>
+          <router-link to="/community" class="read-more-button">Read More</router-link> <!-- Router Link -->
+        </div>
+      </div>
+    </div>
 
     <!-- Footer Section -->
     <FooterComponent />
@@ -38,57 +48,115 @@ import FooterComponent from '../components/FooterComponent.vue'
   font-family: Arial, sans-serif;
 }
 
-/* Header Section */
-.header-section {
-  background-color: #e0f5ff;
-  padding: 20px 0;
+/* Main Content */
+.main-content {
+  padding: 20; /* Remove padding to allow the image to reach the edges */
+}
+
+/* Image Container */
+.image-container {
+  position: relative;
+  margin: 20px 0;
+  text-align: center; /* Center align image */
+}
+
+.image-container img {
+  width:100%;
+  max-width: 1200px; /* Set a fixed width */
+  height: 400px; /* Set a fixed height */
+  border-radius: 8px;
+}
+
+/* Overlay Text */
+.overlay-text {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the text */
+  color: white;
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for better readability */
+}
+
+/* Search Bar */
+.search-bar {
+  position: absolute;
+  top: 60%; /* Adjust the position of the search bar */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the search bar horizontally */
+  display: flex;
+  gap: 10px; /* Space between input and button */
+}
+
+.search-bar input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 500px; /* Set a fixed width for the input */
+  max-width: 100%; /* Ensure it doesn't exceed the container width */
+}
+
+.search-bar button {
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #005595;
+  color: white;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background-color: #004080;
+}
+
+/* Domain Search Section Styles */
+.domain-search-section {
+  padding: 40px 20px;
   text-align: center;
 }
 
-.header-section h1 {
-  margin: 0;
-  color: #005595;
+h2 {
+  color: rgb(94, 147, 219);
   font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for better readability */
 }
 
-/* Breadcrumb */
-.breadcrumb {
-  background-color: transparent;
-  padding-left: 0;
-  justify-content: center;
+.domain-options {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
 }
 
-.breadcrumb-item a {
-  color: #005595;
+.domain-card {
+  width: 30%;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.domain-card h3 {
+  color: rgb(94, 147, 219);
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(115, 169, 227, 0.5); /* Add a shadow for better readability */
+}
+
+.read-more-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #005595;
+  color: white;
+  border: none;
+  border-radius: 4px;
   text-decoration: none;
+  font-size: 1rem;
 }
 
-.breadcrumb-item.active {
-  color: #333;
-}
-
-/* Main Content */
-.main-content {
-  padding: 20px 0;
-}
-
-.main-content h2 {
-  color: #333;
-  font-size: 1.75rem;
-  margin-bottom: 15px;
-}
-
-.main-content p {
-  color: #555;
-  line-height: 1.6;
-}
-
-.main-content a {
-  color: #005595;
-  text-decoration: none;
-}
-
-.main-content a:hover {
-  text-decoration: underline;
+.read-more-button:hover {
+  background-color: #004080;
 }
 </style>

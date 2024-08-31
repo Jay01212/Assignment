@@ -57,7 +57,7 @@ export default {
 .logo {
   font-weight: bold;
   font-size: 1.5em;
-  color: #3674a7;
+  color: rgb(94, 147, 219);
   flex: 1;
 }
 
