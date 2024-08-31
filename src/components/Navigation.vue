@@ -13,8 +13,13 @@ const { isAuthentication, logout } = useAuthentication()
             >Home</router-link
           >
         </li>
+
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
+        </li>
+
+        <li class="nav-item">
+          <router-link to="/article" class="nav-link" active-class="active">Article</router-link>
         </li>
 
         <li v-if="!isAuthentication" class="nav-item">

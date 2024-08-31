@@ -1,5 +1,5 @@
 <script setup>
-import BHeader from './components/BHeader.vue'
+import BHeader from './components/Navigation.vue'
 import LibraryRegistrationForm from './views/HomeView.vue'
 </script>
 

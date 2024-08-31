@@ -1,4 +1,3 @@
-
 <template>
   <div class="login-page">
     <h1 class="site-title">MindCare Hub</h1>
