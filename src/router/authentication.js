@@ -3,12 +3,13 @@ import { ref } from 'vue'
 const isAuthentication = ref(false)
 
 export function useAuthentication() {
-  const setAuthentication = (status) => {
-    isAuthentication.value = status
+  const setAuthentication = (value) => {
+    isAuthentication.value = value
   }
 
   const logout = () => {
-    setAuthentication(false)
+    isAuthentication.value = false
+    // Add any additional logout logic here (e.g., clearing local storage, redirecting)
   }
 
   return {

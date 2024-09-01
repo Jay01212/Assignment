@@ -7,19 +7,19 @@
     <div class="nav-center">
       <ul class="nav nav-pills">
         <li class="nav-item">
-          <router-link to="/" class="nav-link" active-class="active" aria-current="page">Home</router-link>
+          <router-link to="/" class="nav-link" active-class="active">Home</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active" aria-current="page">About</router-link>
+          <a @click="handleNavClick('/about')" class="nav-link" :class="{ active: $route.path === '/about' }">About</a>
         </li>
         <li class="nav-item">
-          <router-link to="/resources" class="nav-link" active-class="active" aria-current="page">Resources</router-link>
+          <a @click="handleNavClick('/resources')" class="nav-link" :class="{ active: $route.path === '/resources' }">Resources</a>
         </li>
         <li class="nav-item">
-          <router-link to="/community" class="nav-link" active-class="active" aria-current="page">Community</router-link>
+          <a @click="handleNavClick('/community')" class="nav-link" :class="{ active: $route.path === '/community' }">Community</a>
         </li>
         <li class="nav-item">
-          <router-link to="/emergency" class="nav-link" active-class="active" aria-current="page">Emergency Help</router-link>
+          <a @click="handleNavClick('/emergency')" class="nav-link" :class="{ active: $route.path === '/emergency' }">Emergency Help</a>
         </li>
       </ul>
     </div>
@@ -40,16 +40,27 @@
 
 <script>
 import { useAuthentication } from '../router/authentication'
-
-const { isAuthentication, logout } = useAuthentication()
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'Navigation',
   setup() {
     const { isAuthentication, logout } = useAuthentication()
+    const router = useRouter()
+
+    const handleNavClick = (path) => {
+      if (!isAuthentication.value && path !== '/') {
+        alert('Your request has been denied because the user is not logged in')
+        router.push('/login')
+      } else {
+        router.push(path)
+      }
+    }
+
     return {
       isAuthentication,
-      logout
+      logout,
+      handleNavClick
     }
   }
 }

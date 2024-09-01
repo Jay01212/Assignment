@@ -9,51 +9,51 @@
           @input="validateUsername" 
           type="text" 
           placeholder="Username*" 
-          required
         >
-        <div v-if="usernameError" class="error-message">{{ usernameError }}</div>
+        <div v-if="errors.username" class="error-message">{{ errors.username }}</div>
 
-        <select v-model="gender" required>
+        <select v-model="gender">
           <option value="" disabled selected>Select Gender*</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
+        <div v-if="errors.gender" class="error-message">{{ errors.gender }}</div>
 
         <input 
           v-model="password" 
           @input="validatePassword" 
           type="password" 
           placeholder="Password*" 
-          required
         >
-        <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
+        <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
 
         <input 
           v-model="confirmPassword" 
           @input="validateConfirmPassword" 
           type="password" 
           placeholder="Confirm Password*" 
-          required
         >
-        <div v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</div>
+        <div v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</div>
 
         <input 
           v-model="phoneNumber" 
           @input="validatePhoneNumber" 
           type="tel" 
           placeholder="Phone Number*" 
-          required
         >
-        <div v-if="phoneNumberError" class="error-message">{{ phoneNumberError }}</div>
+        <div v-if="errors.phoneNumber" class="error-message">{{ errors.phoneNumber }}</div>
 
         <textarea 
           v-model="reason" 
           placeholder="Reason for joining*" 
-          required
         ></textarea>
+        <div v-if="errors.reason" class="error-message">{{ errors.reason }}</div>
 
-        <button type="submit" class="register-button" :disabled="!isFormValid">Register</button>
+        <div class="button-group">
+          <button type="submit" class="register-button">Register</button>
+          <button type="button" @click="clearForm" class="clear-button">Clear</button>
+        </div>
       </form>
       <p class="login-link">
         Already have an account? <router-link to="/login">Log in here!</router-link>
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import FooterComponent from '../components/FooterComponent.vue'
 
@@ -84,59 +84,79 @@ export default {
     const phoneNumber = ref('')
     const reason = ref('')
 
-    const usernameError = ref('')
-    const passwordError = ref('')
-    const confirmPasswordError = ref('')
-    const phoneNumberError = ref('')
+    const errors = reactive({
+      username: '',
+      gender: '',
+      password: '',
+      confirmPassword: '',
+      phoneNumber: '',
+      reason: ''
+    })
 
     const validateUsername = () => {
-      if (username.value.length < 3) {
-        usernameError.value = 'Username must be at least 3 characters long'
+      if (username.value.length === 0) {
+        errors.username = 'Username is required'
+      } else if (username.value.length < 3) {
+        errors.username = 'Username must be at least 3 characters long'
       } else {
-        usernameError.value = ''
+        errors.username = ''
       }
     }
 
     const validatePassword = () => {
-      if (password.value.length < 6) {
-        passwordError.value = 'Password must be at least 6 characters long'
+      if (password.value.length === 0) {
+        errors.password = 'Password is required'
+      } else if (password.value.length < 6) {
+        errors.password = 'Password must be at least 6 characters long'
       } else {
-        passwordError.value = ''
+        errors.password = ''
       }
     }
 
     const validateConfirmPassword = () => {
-      if (password.value !== confirmPassword.value) {
-        confirmPasswordError.value = 'Passwords do not match'
+      if (confirmPassword.value.length === 0) {
+        errors.confirmPassword = 'Please confirm your password'
+      } else if (password.value !== confirmPassword.value) {
+        errors.confirmPassword = 'Passwords do not match'
       } else {
-        confirmPasswordError.value = ''
+        errors.confirmPassword = ''
       }
     }
 
     const validatePhoneNumber = () => {
       const phoneRegex = /^\d{10}$/
-      if (!phoneRegex.test(phoneNumber.value)) {
-        phoneNumberError.value = 'Please enter a valid 10-digit phone number'
+      if (phoneNumber.value.length === 0) {
+        errors.phoneNumber = 'Phone number is required'
+      } else if (!phoneRegex.test(phoneNumber.value)) {
+        errors.phoneNumber = 'Please enter a valid 10-digit phone number'
       } else {
-        phoneNumberError.value = ''
+        errors.phoneNumber = ''
       }
     }
 
-    const isFormValid = computed(() => {
-      return username.value.length >= 3 &&
-             gender.value !== '' &&
-             password.value.length >= 6 &&
-             password.value === confirmPassword.value &&
-             phoneNumber.value.length === 10 &&
-             reason.value !== '' &&
-             !usernameError.value &&
-             !passwordError.value &&
-             !confirmPasswordError.value &&
-             !phoneNumberError.value
-    })
+    const validateForm = () => {
+      validateUsername()
+      validatePassword()
+      validateConfirmPassword()
+      validatePhoneNumber()
+
+      if (gender.value === '') {
+        errors.gender = 'Please select a gender'
+      } else {
+        errors.gender = ''
+      }
+
+      if (reason.value === '') {
+        errors.reason = 'Please provide a reason for joining'
+      } else {
+        errors.reason = ''
+      }
+    }
 
     const handleSubmit = () => {
-      if (isFormValid.value) {
+      validateForm()
+
+      if (Object.values(errors).every(error => error === '')) {
         const newUser = {
           userId: username.value,
           gender: gender.value,
@@ -145,18 +165,25 @@ export default {
           reason: reason.value
         }
 
-        // Get existing users or initialize an empty array
         const users = JSON.parse(localStorage.getItem('users') || '[]')
-        
-        // Add new user
         users.push(newUser)
-
-        // Save updated users array
         localStorage.setItem('users', JSON.stringify(users))
 
-        // Redirect to login page
         router.push('/login')
       }
+    }
+
+    const clearForm = () => {
+      username.value = ''
+      gender.value = ''
+      password.value = ''
+      confirmPassword.value = ''
+      phoneNumber.value = ''
+      reason.value = ''
+
+      Object.keys(errors).forEach(key => {
+        errors[key] = ''
+      })
     }
 
     return {
@@ -166,16 +193,13 @@ export default {
       confirmPassword,
       phoneNumber,
       reason,
-      usernameError,
-      passwordError,
-      confirmPasswordError,
-      phoneNumberError,
+      errors,
+      handleSubmit,
+      clearForm,
       validateUsername,
       validatePassword,
       validateConfirmPassword,
-      validatePhoneNumber,
-      isFormValid,
-      handleSubmit
+      validatePhoneNumber
     }
   }
 }
@@ -256,6 +280,41 @@ textarea {
 .login-link a {
   color: #f50057;
   text-decoration: none;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.register-button,
+.clear-button {
+  width: 48%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.register-button {
+  background-color: #3367d6;
+  color: white;
+}
+
+.clear-button {
+  background-color: #f44336;
+  color: white;
 }
 
 .error-message {

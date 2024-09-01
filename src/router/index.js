@@ -1,47 +1,67 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
-import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import { useAuthentication } from './authentication'
+import { useAuthentication } from '../router/authentication'
+import Home from '../views/HomeView.vue'
+import Login from '../views/LoginView.vue'
+import Register from '../views/RegisterView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: AboutView
+    component: Home,
+    meta: { requiresAuth: false }
   },
   {
     path: '/login',
     name: 'Login',
-    component: LoginView
+    component: Login,
+    meta: { requiresAuth: false }
   },
   {
     path: '/register',
     name: 'Register',
-    component: RegisterView
-  }
+    component: Register,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('../views/AboutView.vue'),
+    meta: { requiresAuth: true }
+  },
+  // {
+  //   path: '/resources',
+  //   name: 'Resources',
+  //   component: () => import('../views/Resources.vue'),
+  //   meta: { requiresAuth: true }
+  // },
+  // {
+  //   path: '/community',
+  //   name: 'Community',
+  //   component: () => import('../views/Community.vue'),
+  //   meta: { requiresAuth: true }
+  // },
+  // {
+  //   path: '/emergency',
+  //   name: 'Emergency',
+  //   component: () => import('../views/Emergency.vue'),
+  //   meta: { requiresAuth: true }
+  // }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
-});
+})
 
 router.beforeEach((to, from, next) => {
-  const { isAuthentication } = useAuthentication();
- 
-  // Check if the route requires authentication
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthentication.value) {
-    alert("Your access has been denied because you are not logged in.");
-    next({ name: 'Login' });
+  const { isAuthentication } = useAuthentication()
+  
+  if (to.meta.requiresAuth && !isAuthentication.value) {
+    alert('Your request has been denied because the user is not logged in')
+    next('/login')
   } else {
-    next();
+    next()
   }
 })
 

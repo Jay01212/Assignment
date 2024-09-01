@@ -19,17 +19,17 @@
         <div class="news-card">
           <h3>Mentalhealth Library</h3>
           <p>Create a comprehensive resource for mental health information and support.</p>
-          <router-link to="/mentalhealth-library" class="read-more-button">Read More</router-link>
+          <a @click="handleReadMore('/mentalhealth-library')" class="read-more-button">Read More</a>
         </div>
         <div class="news-card">
           <h3>List of psychotherapists</h3>
           <p>Perfect for therapists, counselors, and mental health professionals offering services.</p>
-          <router-link to="/psychotherapists-list" class="read-more-button">Read More</router-link>
+          <a @click="handleReadMore('/psychotherapists-list')" class="read-more-button">Read More</a>
         </div>
         <div class="news-card">
           <h3>Community</h3>
           <p>Ideal for creating supportive communities and resources for mental well-being.</p>
-          <router-link to="/community" class="read-more-button">Read More</router-link>
+          <a @click="handleReadMore('/community')" class="read-more-button">Read More</a>
         </div>
       </div>
     </div>
@@ -73,8 +73,22 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { useAuthentication } from '../router/authentication'
 import MentalHealthServices from '../views/MentalHealthServices.vue'
 import FooterComponent from '../components/FooterComponent.vue'
+
+const router = useRouter()
+const { isAuthentication } = useAuthentication()
+
+const handleReadMore = (path) => {
+  if (!isAuthentication.value) {
+    alert('Your request has been denied because the user is not logged in')
+    router.push('/login')
+  } else {
+    router.push(path)
+  }
+}
 </script>
 
 <style scoped>
