@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthentication } from '../router/authentication'
 import Home from '../views/HomeView.vue'
-import Login from '../views/LoginView.vue'
-import Register from '../views/RegisterView.vue'
+import LoginPage from '../views/LoginView.vue'
+import RegisterPage from '../views/RegisterView.vue'
 import AdminConfig from '../views/AdminConfig.vue'
+import LibraryView from '../views/LibraryView.vue'
 import ArticleDetail from '../views/ArticleDetail.vue'
+import { useAuthentication } from '../router/authentication'
 
 const routes = [
   {
@@ -15,14 +16,14 @@ const routes = [
   },
   {
     path: '/register',
-    name: 'Register',
-    component: Register,
+    name: 'RegisterPage',
+    component: RegisterPage,
     meta: { requiresAuth: false }
   },
   {
     path: '/login',
-    name: 'Login',
-    component: Login,
+    name: 'LoginPage',
+    component: LoginPage,
     meta: { requiresAuth: false }
   },
   {
@@ -47,7 +48,7 @@ const routes = [
   {
     path: '/library',
     name: 'Library',
-    component: () => import('../views/LibraryView.vue'),
+    component: LibraryView,
     meta: { requiresAuth: true }
   },
   {
@@ -56,24 +57,6 @@ const routes = [
     component: ArticleDetail,
     props: true
   }
-  // {
-  //   path: '/resources',
-  //   name: 'Resources',
-  //   component: () => import('../views/Resources.vue'),
-  //   meta: { requiresAuth: true }
-  // },
-  // {
-  //   path: '/community',
-  //   name: 'Community',
-  //   component: () => import('../views/Community.vue'),
-  //   meta: { requiresAuth: true }
-  // },
-  // {
-  //   path: '/emergency',
-  //   name: 'Emergency',
-  //   component: () => import('../views/Emergency.vue'),
-  //   meta: { requiresAuth: true }
-  // }
 ]
 
 const router = createRouter({
@@ -81,10 +64,11 @@ const router = createRouter({
   routes
 })
 
+// Use a local variable to store the authentication state
+const { isAuthentication } = useAuthentication()
+
 router.beforeEach((to, from, next) => {
-  const { isAuthenticated } = useAuthentication()
-  
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
+  if (to.meta.requiresAuth && !isAuthentication.value) {
     alert('Your request has been denied because the user is not logged in')
     next('/login')
   } else {

@@ -1,31 +1,34 @@
 <template>
-    <div class="container my-5">
-      <div class="row">
-        <div class="col-md-8">
-          <!-- Article Content -->
-          <h1 class="display-4">{{ article.title }}</h1>
-          <p class="lead">{{ article.content }}</p>
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-md-8">
+        <!-- Article Image -->
+        <img :src="article.image" alt="Article Image" class="img-fluid mb-4">
+
+        <!-- Article Content -->
+        <h1 class="display-4">{{ article.title }}</h1>
+        <p class="lead">{{ article.content }}</p>
   
-          <!-- Rating System -->
-          <div class="rating-section mt-4">
-            <h3>Rate this Article</h3>
-            <div class="d-flex">
-              <button
-                v-for="star in maxRating"
-                :key="star"
-                class="btn"
-                :class="{'btn-primary': rating >= star, 'btn-outline-primary': rating < star}"
-                @click="setRating(star)"
-              >
-                <i class="fas fa-star"></i>
-              </button>
-            </div>
-            <p class="mt-2">Your Rating: {{ rating }} / {{ maxRating }}</p>
-            <p class="mt-2">Average Rating: {{ averageRating }} / {{ maxRating }}</p>
+        <!-- Rating System -->
+        <div class="rating-section mt-4">
+          <h3>Rate this Article</h3>
+          <div class="d-flex">
+            <button
+              v-for="star in maxRating"
+              :key="star"
+              class="btn"
+              :class="{'btn-primary': rating >= star, 'btn-outline-primary': rating < star}"
+              @click="setRating(star)"
+            >
+              <i class="fas fa-star"></i>
+            </button>
           </div>
+          <p class="mt-2">Your Rating: {{ rating }} / {{ maxRating }}</p>
+          <p class="mt-2">Average Rating: {{ averageRating }} / {{ maxRating }}</p>
         </div>
       </div>
     </div>
+  </div>
 </template>
   
 <script setup>
@@ -35,14 +38,13 @@
   const route = useRoute()
   const articleId = route.params.id
   
-  // Example article data (replace this with your actual data source)
   const articles = [
-    { id: '1', title: 'Global Mental Health Report', content: 'Details about the global mental health report.' },
-    { id: '2', title: 'The Rise of Online Therapy', content: 'Details about online therapy.' },
-    { id: '3', title: 'Building Mental Resilience', content: 'Details about building mental resilience.' }
+    { id: '1', title: 'Global Mental Health Report', content: 'Details about the global mental health report.', image: '../images/article1.png' },
+    { id: '2', title: 'The Rise of Online Therapy', content: 'Details about online therapy.', image: '../images/article2.png' },
+    { id: '3', title: 'Building Mental Resilience', content: 'Details about building mental resilience.', image: '../images/article3.png' }
   ]
   
-  const article = ref(articles.find(a => a.id === articleId) || { title: '', content: '' })
+  const article = ref(articles.find(a => a.id === articleId) || { title: '', content: '', image: '' })
   
   const rating = ref(0)
   const maxRating = 5
@@ -98,4 +100,3 @@
     border-color: #dae0e5;
   }
 </style>
-  
