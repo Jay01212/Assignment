@@ -1,24 +1,26 @@
 <template>
-  <div class="login-page">
-    <h2>{{ isLoginView ? 'Log Into Your Account' : 'Enter Password' }}</h2>
-    <div class="login-container">
+  <div class="login-page d-flex flex-column justify-content-center align-items-center min-vh-100 bg-white py-4">
+    <h2 class="text-dark fs-1 mb-4">{{ isLoginView ? 'Log Into Your Account' : 'Enter Password' }}</h2>
+    <div class="login-container bg-white rounded shadow-sm p-4 w-100 max-w-md">
       <form @submit.prevent="handleSubmit" class="login-form">
-        <input v-model="userId" v-if="isLoginView" type="text" placeholder="User ID*" required>
-        <input v-model="password" v-if="!isLoginView" type="password" placeholder="Password*" required>
-        <p class="forgot-link" v-if="isLoginView">Forgot User ID?</p>
-        <button type="submit" class="next-button">{{ isLoginView ? 'Next' : 'Login' }}</button>
+        <input v-model="userId" v-if="isLoginView" type="text" class="form-control mb-3" placeholder="User ID*" required>
+        <input v-model="password" v-if="!isLoginView" type="password" class="form-control mb-3" placeholder="Password*" required>
+        <p class="text-end mb-3 small" v-if="isLoginView">
+          <router-link to="/forgot-user-id" class="text-muted text-decoration-none">Forgot User ID?</router-link>
+        </p>
+        <button type="submit" class="btn btn-primary w-100 mb-3">{{ isLoginView ? 'Next' : 'Login' }}</button>
       </form>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <div class="social-login" v-if="isLoginView">
-        <button @click="loginWithGoogle" class="google-btn">
+      <div v-if="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+      <div class="social-login mt-4" v-if="isLoginView">
+        <button @click="loginWithGoogle" class="btn btn-outline-secondary w-100 mb-2">
           <i class="fab fa-google"></i> Continue with Google
         </button>
-        <button @click="loginWithFacebook" class="facebook-btn">
+        <button @click="loginWithFacebook" class="btn btn-outline-primary w-100">
           <i class="fab fa-facebook"></i> Continue with Facebook
         </button>
       </div>
-      <p class="register-link" v-if="isLoginView">
-        Don't have an account? <router-link to="/register">Get started now!</router-link>
+      <p class="mt-4 text-muted" v-if="isLoginView">
+        Don't have an account? <router-link to="/register" class="text-danger text-decoration-none">Get started now!</router-link>
       </p>
     </div>
 
@@ -84,106 +86,7 @@ export default {
 </script>
 
 <style scoped>
-h2 {
-  color: rgb(0, 0, 0);
-  font-size: 2rem;
-  padding: 10px;
-  margin-top: 20px;
-  text-align: center;
-}
-
-.login-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #ffffff;
-  padding: 20px 0;
-}
-
-.login-container {
-  background-color: #fff;
-  padding: 30px; 
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  max-width: 700px; 
-  width: 100%;
-  margin-top: 20px; 
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.forgot-link {
-  color: #888;
-  text-align: right;
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.next-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #3367d6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.social-login button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.google-btn {
-  background-color: white;
-  color: #757575;
-  border: 1px solid #ccc;
-}
-
-.facebook-btn {
-  background-color: white;
-  color: #4267B2;
-  border: 1px solid #ccc;
-}
-
-.register-link {
-  text-align: center;
-  margin-top: 30px;
-  color: #888;
-}
-
-.register-link a {
-  color: #f50057;
-  text-decoration: none;
-}
-
-.error-message {
-  color: #f44336; /* Red color for error messages */
-  margin-top: 10px;
-}
-
-footer-component {
-  width: 100%;
-  margin-top: auto; /* Pushes the footer to the bottom */
-  background-color: #f8f8f8;
-  padding: 20px;
-  text-align: center;
+.max-w-md {
+  max-width: 28rem;
 }
 </style>

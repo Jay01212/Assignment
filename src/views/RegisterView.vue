@@ -1,62 +1,79 @@
 <template>
-  <div class="register-page">
-    <h2>Create Your Account</h2>
-    <div class="register-container">
+  <div class="container-fluid d-flex flex-column justify-content-center align-items-center min-vh-100 py-3">
+    <div class="register-container bg-white p-4 rounded shadow-sm">
+      <h2 class="text-center text-dark mb-4">Create Your Account</h2>
       <form @submit.prevent="handleSubmit" class="register-form">
-        <input 
-          v-model="username" 
-          @blur="validateUsername" 
-          @input="validateUsername" 
-          type="text" 
-          placeholder="Username*" 
-        >
-        <div v-if="errors.username" class="error-message">{{ errors.username }}</div>
+        <div class="mb-3">
+          <input 
+            v-model="username" 
+            @blur="validateUsername" 
+            @input="validateUsername" 
+            type="text" 
+            class="form-control" 
+            placeholder="Username*" 
+          >
+          <div v-if="errors.username" class="text-danger mt-1">{{ errors.username }}</div>
+        </div>
 
-        <select v-model="gender">
-          <option value="" disabled selected>Select Gender*</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <div v-if="errors.gender" class="error-message">{{ errors.gender }}</div>
+        <div class="mb-3">
+          <select v-model="gender" class="form-select">
+            <option value="" disabled selected>Select Gender*</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          <div v-if="errors.gender" class="text-danger mt-1">{{ errors.gender }}</div>
+        </div>
 
-        <input 
-          v-model="password" 
-          @input="validatePassword" 
-          type="password" 
-          placeholder="Password*" 
-        >
-        <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
+        <div class="mb-3">
+          <input 
+            v-model="password" 
+            @input="validatePassword" 
+            type="password" 
+            class="form-control" 
+            placeholder="Password*" 
+          >
+          <div v-if="errors.password" class="text-danger mt-1">{{ errors.password }}</div>
+        </div>
 
-        <input 
-          v-model="confirmPassword" 
-          @input="validateConfirmPassword" 
-          type="password" 
-          placeholder="Confirm Password*" 
-        >
-        <div v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</div>
+        <div class="mb-3">
+          <input 
+            v-model="confirmPassword" 
+            @input="validateConfirmPassword" 
+            type="password" 
+            class="form-control" 
+            placeholder="Confirm Password*" 
+          >
+          <div v-if="errors.confirmPassword" class="text-danger mt-1">{{ errors.confirmPassword }}</div>
+        </div>
 
-        <input 
-          v-model="phoneNumber" 
-          @input="validatePhoneNumber" 
-          type="tel" 
-          placeholder="Phone Number*" 
-        >
-        <div v-if="errors.phoneNumber" class="error-message">{{ errors.phoneNumber }}</div>
+        <div class="mb-3">
+          <input 
+            v-model="phoneNumber" 
+            @input="validatePhoneNumber" 
+            type="tel" 
+            class="form-control" 
+            placeholder="Phone Number*" 
+          >
+          <div v-if="errors.phoneNumber" class="text-danger mt-1">{{ errors.phoneNumber }}</div>
+        </div>
 
-        <textarea 
-          v-model="reason" 
-          placeholder="Reason for joining*" 
-        ></textarea>
-        <div v-if="errors.reason" class="error-message">{{ errors.reason }}</div>
+        <div class="mb-3">
+          <textarea 
+            v-model="reason" 
+            class="form-control" 
+            placeholder="Reason for joining*" 
+          ></textarea>
+          <div v-if="errors.reason" class="text-danger mt-1">{{ errors.reason }}</div>
+        </div>
 
-        <div class="button-group">
-          <button type="submit" class="register-button">Register</button>
-          <button type="button" @click="clearForm" class="clear-button">Clear</button>
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary w-48">Register</button>
+          <button type="button" @click="clearForm" class="btn btn-danger w-48">Clear</button>
         </div>
       </form>
-      <p class="login-link">
-        Already have an account? <router-link to="/login">Log in here!</router-link>
+      <p class="text-center mt-3">
+        Already have an account? <router-link to="/login" class="text-primary">Log in here!</router-link>
       </p>
     </div>
 
@@ -206,122 +223,24 @@ export default {
 </script>
 
 <style scoped>
-.register-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #ffffff;
-  padding: 20px 0;
-}
-
-h2 {
-  color: rgb(0, 0, 0);
-  font-size: 2rem;
-  padding: 10px;
-  margin-top: 20px;
-  text-align: center;
-}
-
 .register-container {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  max-width: 700px;
+  max-width: 600px;
   width: 100%;
-  margin-top: 20px;
 }
 
-.register-form {
-  display: flex;
-  flex-direction: column;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-textarea {
-  height: 100px;
-  resize: vertical;
-}
-
-.register-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #3367d6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
+.btn {
   font-weight: bold;
 }
 
-.register-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.login-link {
-  text-align: center;
-  margin-top: 30px;
-  color: #888;
-}
-
-.login-link a {
-  color: #f50057;
-  text-decoration: none;
-}
-
-.error-message {
-  color: #f44336;
-  font-size: 14px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  text-align: left;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.register-button,
-.clear-button {
+.w-48 {
   width: 48%;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
 }
 
-.register-button {
-  background-color: #3367d6;
-  color: white;
+.text-primary {
+  color: #0d6efd;
 }
 
-.clear-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.error-message {
-  color: #f44336;
-  font-size: 14px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  text-align: left;
+.text-danger {
+  color: #dc3545;
 }
 </style>

@@ -1,87 +1,82 @@
 <template>
-    <div class="star-rating">
-      <span
-        v-for="star in 5"
-        :key="star"
-        class="star"
-        :class="{ 'filled': star <= rating, 'clickable': !readonly }"
-        @click="setRating(star)"
-        @mouseover="hoverRating = star"
-        @mouseleave="hoverRating = 0"
-      >
-        ★
-      </span>
-      <span v-if="showRating" class="rating-text">{{ displayRating }}</span>
+  <div class="rating">
+    <div class="stars">
+      <i 
+        v-for="star in 5" 
+        :key="star" 
+        :class="['fa-star', { 'fas': star <= userRating, 'far': star > userRating }]" 
+        @click="rate(star)"
+      ></i>
     </div>
-  </template>
-  
-  <script>
-  import { ref, computed } from 'vue';
-  
-  export default {
-    name: 'StarRating',
-    props: {
-      initialRating: {
-        type: Number,
-        default: 0
-      },
-      readonly: {
-        type: Boolean,
-        default: false
-      },
-      showRating: {
-        type: Boolean,
-        default: true
-      }
-    },
-    emits: ['update:rating'],
-    setup(props, { emit }) {
-      const rating = ref(props.initialRating);
-      const hoverRating = ref(0);
-  
-      const displayRating = computed(() => {
-        return (hoverRating.value || rating.value).toFixed(1);
-      });
-  
-      const setRating = (value) => {
-        if (!props.readonly) {
-          rating.value = value;
-          emit('update:rating', value);
-        }
-      };
-  
-      return {
-        rating,
-        hoverRating,
-        displayRating,
-        setRating
-      };
+    <p class="rating-feedback">Average Rating: {{ averageRating.toFixed(1) }} / 5</p>
+  </div>
+</template>
+
+<script>
+import { ref, computed, watch } from 'vue'
+
+export default {
+  name: 'RatingComponent',
+  props: {
+    initialRating: {
+      type: Number,
+      default: 0
     }
-  };
-  </script>
-  
-  <style scoped>
-  .star-rating {
-    display: inline-flex;
-    align-items: center;
+  },
+  setup(props) {
+    const userRating = ref(props.initialRating)
+    const ratings = ref(JSON.parse(localStorage.getItem('ratings') || '[]'))
+
+    // Compute average rating
+    const averageRating = computed(() => {
+      if (ratings.value.length === 0) return 0
+      const total = ratings.value.reduce((sum, rating) => sum + rating, 0)
+      return total / ratings.value.length
+    })
+
+    // Rate the item
+    const rate = (star) => {
+      userRating.value = star
+      ratings.value.push(star)
+      localStorage.setItem('ratings', JSON.stringify(ratings.value))
+    }
+
+    // Watch for changes and update local storage
+    watch(userRating, (newRating) => {
+      ratings.value.push(newRating)
+      localStorage.setItem('ratings', JSON.stringify(ratings.value))
+    })
+
+    return {
+      userRating,
+      averageRating,
+      rate
+    }
   }
-  
-  .star {
-    font-size: 24px;
-    color: #ddd;
-    transition: color 0.2s;
-  }
-  
-  .star.filled {
-    color: #ffd700;
-  }
-  
-  .star.clickable {
-    cursor: pointer;
-  }
-  
-  .rating-text {
-    margin-left: 10px;
-    font-size: 18px;
-  }
-  </style>
+}
+</script>
+
+<style scoped>
+.rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stars {
+  font-size: 2rem;
+}
+
+.fas {
+  color: gold;
+  cursor: pointer;
+}
+
+.far {
+  color: lightgray;
+}
+
+.rating-feedback {
+  margin-top: 0.5rem;
+}
+</style>

@@ -3,6 +3,7 @@ import { useAuthentication } from '../router/authentication'
 import Home from '../views/HomeView.vue'
 import Login from '../views/LoginView.vue'
 import Register from '../views/RegisterView.vue'
+import ArticleDetail from '../views/ArticleDetail.vue'
 
 const routes = [
   {
@@ -29,6 +30,17 @@ const routes = [
     component: () => import('../views/AboutView.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/library',
+    name: 'Library',
+    component: () => import('../views/LibraryView.vue'),
+    meta: { requiresAuth: true }
+  },
+  { path: '/article/:id', 
+    name: 'ArticleDetail', 
+    component: ArticleDetail, 
+    props: true 
+  }
   // {
   //   path: '/resources',
   //   name: 'Resources',

@@ -1,65 +1,87 @@
 <template>
   <div class="home">
     <!-- Main Content Section -->
-    <div class="main-content container">
-      <div class="image-container">
-        <img src="../images/homepage1.png" alt="Mental Health Image">
-        <div class="overlay-text">Your Mental Health Matters</div>
-        <div class="search-bar">
-          <input type="text" placeholder="Search..." />
-          <button type="button">Search</button>
+    <div class="container-fluid p-0">
+      <div class="position-relative">
+        <div class="image-container">
+          <img src="../images/homepage1.png" alt="Mental Health Image" class="img-fluid w-100">
+        </div>
+        <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+          <h1 class="display-4 fw-bold">Your Mental Health Matters</h1>
+          <div class="mt-4">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search...">
+              <button class="btn btn-primary" type="button">Search</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- News Section -->
-    <div class="news-section">
-      <h2>LATEST NEWS</h2>
-      <div class="news-box">
-        <div class="news-card">
-          <h3>Mentalhealth Library</h3>
-          <p>Create a comprehensive resource for mental health information and support.</p>
-          <a @click="handleReadMore('/mentalhealth-library')" class="read-more-button">Read More</a>
+    <div class="container my-5">
+      <h2 class="text-center mb-4">LATEST NEWS</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title h4">Global Mental Health Report: Surge in Mental Health Issues Post-Pandemic</h3>
+              <p class="card-text">The United Nations Mental Health Commission has released a report indicating a significant increase in mental health issues globally following the COVID-19 pandemic. The report highlights a notable rise in anxiety, depression, and stress symptoms across many countries. It calls on governments to invest more in mental health resources and improve the accessibility and quality of mental health services.</p>
+              <router-link to="/mentalhealth-library" class="btn btn-primary mt-auto">Read More</router-link>
+            </div>
+          </div>
         </div>
-        <div class="news-card">
-          <h3>List of psychotherapists</h3>
-          <p>Perfect for therapists, counselors, and mental health professionals offering services.</p>
-          <a @click="handleReadMore('/psychotherapists-list')" class="read-more-button">Read More</a>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title h4">List of psychotherapists</h3>
+              <p class="card-text">Perfect for therapists, counselors, and mental health professionals offering services.</p>
+              <router-link to="/psychotherapists-list" class="btn btn-primary mt-auto">Read More</router-link>
+            </div>
+          </div>
         </div>
-        <div class="news-card">
-          <h3>Community</h3>
-          <p>Ideal for creating supportive communities and resources for mental well-being.</p>
-          <a @click="handleReadMore('/community')" class="read-more-button">Read More</a>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title h4">Community</h3>
+              <p class="card-text">Ideal for creating supportive communities and resources for mental well-being.</p>
+              <router-link to="/community" class="btn btn-primary mt-auto">Read More</router-link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Mentalhealth library Section -->
-    <div class="library-section">
-      <h2>MENTALHEALTH LIBRARY</h2>
-      <div class="library-content">
-        <div class="library-image">
-          <img src="../images/library.png" alt="Mental Health Library">
-        </div>
-        <div class="library-text">
-          <h3>Comprehensive Resources at Your Fingertips</h3>
-          <p>Explore our extensive collection of articles, research papers, and self-help guides. Our mental health library is designed to provide you with reliable information on various mental health topics.</p>
-          <router-link to="/library" class="explore-button">Explore Library</router-link>
+    <div class="bg-light py-5">
+      <div class="container">
+        <h2 class="text-center mb-4">MENTALHEALTH LIBRARY</h2>
+        <div class="row align-items-center">
+          <div class="col-md-6 mb-4 mb-md-0">
+            <img src="../images/library.png" alt="Mental Health Library" class="img-fluid rounded">
+          </div>
+          <div class="col-md-6">
+            <h3 class="h4 mb-3">Comprehensive Resources at Your Fingertips</h3>
+            <p>Explore our extensive collection of articles, research papers, and self-help guides. Our mental health library is designed to provide you with reliable information on various mental health topics.</p>
+            <router-link to="/library" class="btn btn-primary">Explore Library</router-link>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- List of psychotherapists -->
-    <div class="therapists-section">
-      <h2>FIND A PSYCHOTHERAPIST</h2>
-      <div class="therapists-content">
-        <div class="therapists-image">
-          <img src="../images/therapists.png" alt="Our Psychotherapists">
-        </div>
-        <div class="therapists-text">
-          <h3>Expert Support for Your Mental Health Journey</h3>
-          <p>Connect with our network of qualified psychotherapists specializing in various areas of mental health. Our professionals are here to provide personalized care and support to help you on your path to wellbeing.</p>
-          <router-link to="/all-therapists" class="explore-button">View All Therapists</router-link>
+    <div class="bg-secondary py-5">
+      <div class="container">
+        <h2 class="text-center mb-4">FIND A PSYCHOTHERAPIST</h2>
+        <div class="row align-items-center">
+          <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+            <img src="../images/therapists.png" alt="Our Psychotherapists" class="img-fluid rounded">
+          </div>
+          <div class="col-md-6 order-md-1">
+            <h3 class="h4 mb-3">Expert Support for Your Mental Health Journey</h3>
+            <p>Connect with our network of qualified psychotherapists specializing in various areas of mental health. Our professionals are here to provide personalized care and support to help you on your path to wellbeing.</p>
+            <router-link to="/all-therapists" class="btn btn-primary">View All Therapists</router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -81,6 +103,7 @@ import FooterComponent from '../components/FooterComponent.vue'
 const router = useRouter()
 const { isAuthentication } = useAuthentication()
 
+// Handle Read More button click
 const handleReadMore = (path) => {
   if (!isAuthentication.value) {
     alert('Your request has been denied because the user is not logged in')
@@ -92,196 +115,41 @@ const handleReadMore = (path) => {
 </script>
 
 <style scoped>
-/* General Styles */
 .home {
   font-family: Arial, sans-serif;
 }
 
-/* Main Content */
-.main-content {
-  padding: 20;
+h2 {
+  color: rgb(94, 147, 219);
+  font-weight: bold;
+  text-shadow: 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
 }
 
-/* Image Container */
 .image-container {
-  position: relative;
-  margin: 20px 0;
-  text-align: center; /* Center align image */
+  height: 400px; /* Adjust this value to your preferred height */
+  overflow: hidden;
 }
 
 .image-container img {
-  width:100%;
-  max-width: 1200px;
-  height: 400px;
-  border-radius: 8px;
-}
-
-/* Overlay Text */
-.overlay-text {
-  position: absolute;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Center the text */
-  color: white;
-  font-size: 3rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for better readability */
-}
-
-/* Search Bar */
-.search-bar {
-  position: absolute;
-  top: 60%; /* Adjust the position of the search bar */
-  left: 50%;
-  transform: translate(-50%, -50%); /* Center the search bar horizontally */
-  display: flex;
-  gap: 10px; /* Space between input and button */
-}
-
-.search-bar input {
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 500px;
-  max-width: 100%;
-}
-
-.search-bar button {
-  padding: 10px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #005595;
-  color: white;
-  cursor: pointer;
-}
-
-.search-bar button:hover {
-  background-color: #004080;
-}
-
-/* News Section Style */
-.news-section {
-  padding: 40px 20px;
-  text-align: center;
-}
-
-h2 {
-  color: rgb(94, 147, 219);
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.news-box {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 40px;
-}
-
-.news-card {
-  width: 30%;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-}
-
-.news-card h3 {
-  color: rgb(94, 147, 219);
-  font-size: 2rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(115, 169, 227, 0.5);
-}
-
-.read-more-button {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #005595;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 1rem;
-}
-
-.read-more-button:hover {
-  background-color: #004080;
-}
-
-/* Mentalhealth library Section */
-.library-section {
-  padding: 40px 20px;
-  background-color: #f5f5f5;
-}
-
-.library-content {
-  display: flex;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.library-image {
-  flex: 1;
-}
-
-.library-image img {
+  object-fit: cover;
+  object-position: center;
   width: 100%;
-  border-radius: 8px;
+  height: 100%;
 }
 
-.library-text {
-  flex: 1;
-  padding: 0 40px;
-}
-
-.library-text h3 {
+.card-title {
   color: rgb(94, 147, 219);
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-weight: bold;
+  text-shadow: 0.125rem 0.125rem 0.25rem rgba(115, 169, 227, 0.5);
 }
 
-.explore-button {
-  display: inline-block;
-  padding: 10px 20px;
+.btn-primary {
   background-color: #005595;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  margin-top: 20px;
+  border-color: #005595;
 }
 
-/* List of psychotherapists */
-.therapists-section {
-  padding: 40px 20px;
-  background-color: #bcbcbc;
-}
-
-.therapists-content {
-  display: flex;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.therapists-image {
-  flex: 1;
-}
-
-.therapists-image img {
-  width: 100%;
-  border-radius: 8px;
-}
-
-.therapists-text {
-  flex: 1;
-  padding: 0 40px;
-}
-
-.therapists-text h3 {
-  color: rgb(94, 147, 219);
-  font-size: 2rem;
-  margin-bottom: 20px;
+.btn-primary:hover {
+  background-color: #004080;
+  border-color: #004080;
 }
 </style>
