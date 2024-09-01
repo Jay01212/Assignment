@@ -207,9 +207,13 @@ export default {
           reason: reason.value
         }
 
-        const users = JSON.parse(localStorage.getItem('users') || '[]')
+        // Get all users from localStorage and store them sorted by user type
+        const allUsers = JSON.parse(localStorage.getItem('users') || '{}')
+        const users = allUsers[userType.value] || []
+
         users.push(newUser)
-        localStorage.setItem('users', JSON.stringify(users))
+        allUsers[userType.value] = users
+        localStorage.setItem('users', JSON.stringify(allUsers))
 
         router.push('/login')
       }

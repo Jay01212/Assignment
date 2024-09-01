@@ -16,7 +16,7 @@
         <p class="text-end mb-3 small" v-if="isLoginView">
           <router-link to="/forgot-user-id" class="text-muted text-decoration-none">Forgot User ID?</router-link>
         </p>
-        <button type="submit" class="btn btn-primary w-100 mb-3">{{ isLoginView ? 'Next' : 'Login' }}</button>
+        <button type="submit" class="btn btn-primary w-100 mb-3" :disabled="isSubmitting">{{ isLoginView ? 'Next' : 'Login' }}</button>
       </form>
       <div v-if="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
       <div class="social-login mt-4" v-if="isLoginView">
@@ -56,8 +56,10 @@ export default {
     const selectedRole = ref('')
     const password = ref('')
     const errorMessage = ref('')
+    const isSubmitting = ref(false)
 
     const handleSubmit = () => {
+      isSubmitting.value = true
       const users = JSON.parse(localStorage.getItem('users') || '[]')
 
       if (isLoginView.value) {
@@ -87,6 +89,7 @@ export default {
           errorMessage.value = 'Invalid User ID, Password, or Role. Please try again.'
         }
       }
+      isSubmitting.value = false
     }
 
     return {
@@ -95,7 +98,8 @@ export default {
       selectedRole,
       password,
       errorMessage,
-      handleSubmit
+      handleSubmit,
+      isSubmitting
     }
   }
 }
