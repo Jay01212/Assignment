@@ -4,6 +4,14 @@
     <div class="login-container bg-white rounded shadow-sm p-4 w-100 max-w-md">
       <form @submit.prevent="handleSubmit" class="login-form">
         <input v-model="userId" v-if="isLoginView" type="text" class="form-control mb-3" placeholder="User ID*" required>
+        
+        <!-- selecting roles -->
+        <select v-model="selectedRole" v-if="isLoginView" class="form-control mb-3" required>
+          <option value="" disabled>Select Role*</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+
         <input v-model="password" v-if="!isLoginView" type="password" class="form-control mb-3" placeholder="Password*" required>
         <p class="text-end mb-3 small" v-if="isLoginView">
           <router-link to="/forgot-user-id" class="text-muted text-decoration-none">Forgot User ID?</router-link>
@@ -42,34 +50,41 @@ export default {
   },
   setup() {
     const router = useRouter()
-    const { isAuthentication, setAuthentication } = useAuthentication()
+    const { setAuthentication } = useAuthentication()
     const isLoginView = ref(true)
     const userId = ref('')
+    const selectedRole = ref('')
     const password = ref('')
     const errorMessage = ref('')
 
     const handleSubmit = () => {
+      const users = JSON.parse(localStorage.getItem('users') || '[]')
+
       if (isLoginView.value) {
-        const users = JSON.parse(localStorage.getItem('users') || '[]')
-        const existingUser = users.find(user => user.userId === userId.value)
+        const existingUser = users.find(user => user.userId === userId.value && user.userType === selectedRole.value)
 
         if (existingUser) {
           isLoginView.value = false
           errorMessage.value = ''
         } else {
-          errorMessage.value = 'User ID not found. Please try again.'
+          errorMessage.value = 'User ID not found or role mismatch. Please try again.'
         }
       } else {
-        const users = JSON.parse(localStorage.getItem('users') || '[]')
-        const validUser = users.find(user => user.userId === userId.value && user.password === password.value)
+        const validUser = users.find(user => user.userId === userId.value && user.password === password.value && user.userType === selectedRole.value)
 
         if (validUser) {
           alert('Login successful!')
           setAuthentication(true)
-          router.push({ name: 'Home' })
+          
+          // Jump to different pages according to user roles
+          if (validUser.userType === 'admin') {
+            router.push({ name: 'AdminConfig' })
+          } else {
+            router.push({ name: 'Home' })
+          }
           errorMessage.value = ''
         } else {
-          errorMessage.value = 'Invalid User ID or Password. Please try again.'
+          errorMessage.value = 'Invalid User ID, Password, or Role. Please try again.'
         }
       }
     }
@@ -77,6 +92,7 @@ export default {
     return {
       isLoginView,
       userId,
+      selectedRole,
       password,
       errorMessage,
       handleSubmit

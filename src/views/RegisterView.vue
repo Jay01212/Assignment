@@ -3,6 +3,7 @@
     <div class="register-container bg-white p-4 rounded shadow-sm">
       <h2 class="text-center text-dark mb-4">Create Your Account</h2>
       <form @submit.prevent="handleSubmit" class="register-form">
+        <!-- Username Field -->
         <div class="mb-3">
           <input 
             v-model="username" 
@@ -15,6 +16,7 @@
           <div v-if="errors.username" class="text-danger mt-1">{{ errors.username }}</div>
         </div>
 
+        <!-- Gender Field -->
         <div class="mb-3">
           <select v-model="gender" class="form-select">
             <option value="" disabled selected>Select Gender*</option>
@@ -25,6 +27,17 @@
           <div v-if="errors.gender" class="text-danger mt-1">{{ errors.gender }}</div>
         </div>
 
+        <!-- Registration Type Field -->
+        <div class="mb-3">
+          <select v-model="userType" class="form-select">
+            <option value="" disabled selected>Select Registration Type*</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div v-if="errors.userType" class="text-danger mt-1">{{ errors.userType }}</div>
+        </div>
+
+        <!-- Password Field -->
         <div class="mb-3">
           <input 
             v-model="password" 
@@ -36,6 +49,7 @@
           <div v-if="errors.password" class="text-danger mt-1">{{ errors.password }}</div>
         </div>
 
+        <!-- Confirm Password Field -->
         <div class="mb-3">
           <input 
             v-model="confirmPassword" 
@@ -47,6 +61,7 @@
           <div v-if="errors.confirmPassword" class="text-danger mt-1">{{ errors.confirmPassword }}</div>
         </div>
 
+        <!-- Phone Number Field -->
         <div class="mb-3">
           <input 
             v-model="phoneNumber" 
@@ -58,6 +73,7 @@
           <div v-if="errors.phoneNumber" class="text-danger mt-1">{{ errors.phoneNumber }}</div>
         </div>
 
+        <!-- Reason Field -->
         <div class="mb-3">
           <textarea 
             v-model="reason" 
@@ -96,6 +112,7 @@ export default {
     const router = useRouter()
     const username = ref('')
     const gender = ref('')
+    const userType = ref('')
     const password = ref('')
     const confirmPassword = ref('')
     const phoneNumber = ref('')
@@ -104,6 +121,7 @@ export default {
     const errors = reactive({
       username: '',
       gender: '',
+      userType: '',
       password: '',
       confirmPassword: '',
       phoneNumber: '',
@@ -163,6 +181,12 @@ export default {
         errors.gender = ''
       }
 
+      if (userType.value === '') {
+        errors.userType = 'Please select a registration type'
+      } else {
+        errors.userType = ''
+      }
+
       if (reason.value === '') {
         errors.reason = 'Please provide a reason for joining'
       } else {
@@ -177,6 +201,7 @@ export default {
         const newUser = {
           userId: username.value,
           gender: gender.value,
+          userType: userType.value,
           password: password.value,
           phoneNumber: phoneNumber.value,
           reason: reason.value
@@ -193,6 +218,7 @@ export default {
     const clearForm = () => {
       username.value = ''
       gender.value = ''
+      userType.value = ''
       password.value = ''
       confirmPassword.value = ''
       phoneNumber.value = ''
@@ -206,6 +232,7 @@ export default {
     return {
       username,
       gender,
+      userType,
       password,
       confirmPassword,
       phoneNumber,

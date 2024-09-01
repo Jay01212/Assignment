@@ -3,6 +3,7 @@ import { useAuthentication } from '../router/authentication'
 import Home from '../views/HomeView.vue'
 import Login from '../views/LoginView.vue'
 import Register from '../views/RegisterView.vue'
+import AdminConfig from '../views/AdminConfig.vue'
 import ArticleDetail from '../views/ArticleDetail.vue'
 
 const routes = [
@@ -17,6 +18,19 @@ const routes = [
     name: 'Login',
     component: Login,
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/admin',
+    name: 'AdminConfig',
+    component: AdminConfig,
+    beforeEnter: (to, from, next) => {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      if (currentUser.role === 'admin') {
+        next();
+      } else {
+        next({ name: 'Home' });
+      }
+    }
   },
   {
     path: '/register',
@@ -36,10 +50,11 @@ const routes = [
     component: () => import('../views/LibraryView.vue'),
     meta: { requiresAuth: true }
   },
-  { path: '/article/:id', 
-    name: 'ArticleDetail', 
-    component: ArticleDetail, 
-    props: true 
+  {
+    path: '/article/:id',
+    name: 'ArticleDetail',
+    component: ArticleDetail,
+    props: true
   }
   // {
   //   path: '/resources',
@@ -67,9 +82,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const { isAuthentication } = useAuthentication()
+  const { isAuthenticated } = useAuthentication()
   
-  if (to.meta.requiresAuth && !isAuthentication.value) {
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
     alert('Your request has been denied because the user is not logged in')
     next('/login')
   } else {
