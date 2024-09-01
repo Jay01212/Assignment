@@ -58,7 +58,7 @@
         <h2 class="text-center mb-4">MENTALHEALTH LIBRARY</h2>
         <div class="row align-items-center">
           <div class="col-md-6 mb-4 mb-md-0">
-            <img src="../images/library.png" alt="Mental Health Library" class="img-fluid rounded">
+            <img src="../images/library1.jpg" alt="Mental Health Library" class="img-fluid rounded">
           </div>
           <div class="col-md-6">
             <h3 class="h4 mb-3">Comprehensive Resources at Your Fingertips</h3>
@@ -75,7 +75,7 @@
         <h2 class="text-center mb-4">FIND A PSYCHOTHERAPIST</h2>
         <div class="row align-items-center">
           <div class="col-md-6 order-md-2 mb-4 mb-md-0">
-            <img src="../images/therapists.png" alt="Our Psychotherapists" class="img-fluid rounded">
+            <img src="../images/therapists1.jpg" alt="Our Psychotherapists" class="img-fluid rounded">
           </div>
           <div class="col-md-6 order-md-1">
             <h3 class="h4 mb-3">Expert Support for Your Mental Health Journey</h3>
@@ -126,7 +126,7 @@ h2 {
 }
 
 .image-container {
-  height: 400px; /* Adjust this value to your preferred height */
+  height: 400px;
   overflow: hidden;
 }
 

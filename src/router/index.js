@@ -14,6 +14,12 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: { requiresAuth: false }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: Login,
@@ -25,18 +31,12 @@ const routes = [
     component: AdminConfig,
     beforeEnter: (to, from, next) => {
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (currentUser.role === 'admin') {
+      if (currentUser.userType === 'admin') {
         next();
       } else {
         next({ name: 'Home' });
       }
     }
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: Register,
-    meta: { requiresAuth: false }
   },
   {
     path: '/about',
