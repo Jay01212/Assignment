@@ -7,8 +7,13 @@ export function useAuthentication() {
     isAuthentication.value = status
   }
 
+  const logout = () => {
+    setAuthentication(false)
+  }
+
   return {
     isAuthentication,
-    setAuthentication
+    setAuthentication,
+    logout
   }
 }

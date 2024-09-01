@@ -41,6 +41,8 @@
 <script>
 import { useAuthentication } from '../router/authentication'
 
+const { isAuthentication, logout } = useAuthentication()
+
 export default {
   name: 'Navigation',
   setup() {

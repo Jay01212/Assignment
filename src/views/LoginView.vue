@@ -63,8 +63,8 @@ export default {
 
         if (validUser) {
           alert('Login successful!')
-          setAuthentication(true) // 更新认证状态
-          router.push({ name: 'Home' }) // 重定向到首页
+          setAuthentication(true)
+          router.push({ name: 'Home' })
           errorMessage.value = ''
         } else {
           errorMessage.value = 'Invalid User ID or Password. Please try again.'

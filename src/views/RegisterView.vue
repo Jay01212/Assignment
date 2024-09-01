@@ -184,17 +184,16 @@ const clearForm = () => {
 <style scoped>
 .register-page {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: #f8f9fa;
-  padding: 20px 0;
+  padding: 20px;
 }
 
 .register-container {
   background-color: #fff;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -204,9 +203,8 @@ const clearForm = () => {
 
 h2 {
   color: #333;
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin-bottom: 20px;
-  text-align: center;
 }
 
 input, select, textarea {
