@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/HomeView.vue'
 import LoginPage from '../views/LoginView.vue'
 import RegisterPage from '../views/RegisterView.vue'
-import AdminConfig from '../views/AdminConfig.vue'
 import LibraryView from '../views/LibraryView.vue'
 import ArticleDetail from '../views/ArticleDetail.vue'
 import { useAuthentication } from '../router/authentication'
@@ -27,23 +26,10 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
-    path: '/admin',
-    name: 'AdminConfig',
-    component: AdminConfig,
-    beforeEnter: (to, from, next) => {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (currentUser.userType === 'admin') {
-        next();
-      } else {
-        next({ name: 'Home' });
-      }
-    }
-  },
-  {
     path: '/about',
     name: 'About',
     component: () => import('../views/AboutView.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: '/library',
@@ -64,15 +50,19 @@ const router = createRouter({
   routes
 })
 
-// Use a local variable to store the authentication state
+// Using local variables to store authentication status
 const { isAuthentication } = useAuthentication()
 
 router.beforeEach((to, from, next) => {
   const { isAuthentication } = useAuthentication()
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
   if (to.meta.requiresAuth && !isAuthentication.value) {
     alert('Your request has been denied because the user is not logged in')
     next('/login')
+  } else if (to.meta.requiresAdmin && currentUser.userType !== 'admin') {
+    alert('Your request has been denied because you are not an admin')
+    next('/')
   } else {
     next()
   }

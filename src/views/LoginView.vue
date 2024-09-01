@@ -42,6 +42,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthentication } from '../router/authentication'
 import FooterComponent from '../components/FooterComponent.vue'
+import DOMPurify from 'dompurify'
 
 export default {
   name: 'LoginPage',
@@ -58,12 +59,21 @@ export default {
     const errorMessage = ref('')
     const isSubmitting = ref(false)
 
+    const sanitizeInput = (input) => {
+      return DOMPurify.sanitize(input)
+    }
+
     const handleSubmit = () => {
       isSubmitting.value = true
       const users = JSON.parse(localStorage.getItem('users') || '[]')
 
+      // Sanitize inputs
+      const sanitizedUserId = sanitizeInput(userId.value)
+      const sanitizedRole = sanitizeInput(selectedRole.value)
+      const sanitizedPassword = sanitizeInput(password.value)
+
       if (isLoginView.value) {
-        const existingUser = users.find(user => user.userId === userId.value && user.userType === selectedRole.value)
+        const existingUser = users.find(user => user.userId === sanitizedUserId && user.userType === sanitizedRole)
 
         if (existingUser) {
           isLoginView.value = false
@@ -72,7 +82,7 @@ export default {
           errorMessage.value = 'User ID not found or role mismatch. Please try again.'
         }
       } else {
-        const validUser = users.find(user => user.userId === userId.value && user.password === password.value && user.userType === selectedRole.value)
+        const validUser = users.find(user => user.userId === sanitizedUserId && user.password === sanitizedPassword && user.userType === sanitizedRole)
 
         if (validUser) {
           alert('Login successful!')
@@ -80,7 +90,7 @@ export default {
           
           // Jump to different pages according to user roles
           if (validUser.userType === 'admin') {
-            router.push({ name: 'AdminConfig' })
+            router.push({ name: 'About' }) 
           } else {
             router.push({ name: 'Home' })
           }
