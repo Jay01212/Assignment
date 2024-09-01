@@ -1,182 +1,182 @@
 <template>
   <div class="register-page">
-    <h2>Register Your Account</h2>
+    <h2>Create Your Account</h2>
     <div class="register-container">
-      <form @submit.prevent="submitForm" class="register-form">
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="username" class="form-label">Username*</label>
-            <input
-              type="text"
-              class="form-control"
-              id="username"
-              v-model="formData.username"
-              @blur="() => validateName(true)"
-              @input="() => validateName(false)"
-              required
-            />
-            <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
-          </div>
+      <form @submit.prevent="handleSubmit" class="register-form">
+        <input 
+          v-model="username" 
+          @blur="validateUsername" 
+          @input="validateUsername" 
+          type="text" 
+          placeholder="Username*" 
+          required
+        >
+        <div v-if="usernameError" class="error-message">{{ usernameError }}</div>
 
-          <div class="col-md-6">
-            <label for="password" class="form-label">Password*</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              v-model="formData.password"
-              @blur="() => validatePassword(true)"
-              @input="() => validatePassword(false)"
-              required
-            />
-            <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
-          </div>
+        <select v-model="gender" required>
+          <option value="" disabled selected>Select Gender*</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
 
-          <div class="col-md-6">
-            <label for="confirm-password" class="form-label">Confirm Password*</label>
-            <input
-              type="password"
-              class="form-control"
-              id="confirm-password"
-              v-model="formData.confirmPassword"
-              @blur="() => validateConfirmPassword(true)"
-              required
-            />
-            <div v-if="errors.confirmPassword" class="text-danger">{{ errors.confirmPassword }}</div>
-          </div>
+        <input 
+          v-model="password" 
+          @input="validatePassword" 
+          type="password" 
+          placeholder="Password*" 
+          required
+        >
+        <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
 
-          <div class="col-md-6">
-            <label for="gender" class="form-label">Gender*</label>
-            <select class="form-select" id="gender" v-model="formData.gender" required>
-              <option value="" disabled>Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+        <input 
+          v-model="confirmPassword" 
+          @input="validateConfirmPassword" 
+          type="password" 
+          placeholder="Confirm Password*" 
+          required
+        >
+        <div v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</div>
 
-          <div class="col-md-6">
-            <label for="reason" class="form-label">Reason for Joining*</label>
-            <textarea
-              class="form-control"
-              id="reason"
-              v-model="formData.reason"
-              @blur="() => validateReason(true)"
-              @input="() => validateReason(false)"
-              rows="3"
-              required
-            ></textarea>
-            <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
-            <div v-if="reasonhasfriend" style="color: green;">Great to have a friend</div>
-          </div>
-        </div>
+        <input 
+          v-model="phoneNumber" 
+          @input="validatePhoneNumber" 
+          type="tel" 
+          placeholder="Phone Number*" 
+          required
+        >
+        <div v-if="phoneNumberError" class="error-message">{{ phoneNumberError }}</div>
 
-        <div class="text-center">
-          <button type="submit" class="btn btn-primary me-2">Register</button>
-          <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
-        </div>
+        <textarea 
+          v-model="reason" 
+          placeholder="Reason for joining*" 
+          required
+        ></textarea>
+
+        <button type="submit" class="register-button" :disabled="!isFormValid">Register</button>
       </form>
+      <p class="login-link">
+        Already have an account? <router-link to="/login">Log in here!</router-link>
+      </p>
     </div>
+
+    <!-- Footer Section -->
+    <FooterComponent />
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script>
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import FooterComponent from '../components/FooterComponent.vue'
 
-const router = useRouter()
+export default {
+  name: 'RegisterPage',
+  components: {
+    FooterComponent
+  },
+  setup() {
+    const router = useRouter()
+    const username = ref('')
+    const gender = ref('')
+    const password = ref('')
+    const confirmPassword = ref('')
+    const phoneNumber = ref('')
+    const reason = ref('')
 
-const formData = ref({
-  username: '',
-  password: '',
-  confirmPassword: '',
-  gender: '',
-  reason: '',
-})
+    const usernameError = ref('')
+    const passwordError = ref('')
+    const confirmPasswordError = ref('')
+    const phoneNumberError = ref('')
 
-const errors = ref({
-  username: null,
-  password: null,
-  confirmPassword: null,
-  reason: null,
-})
+    const validateUsername = () => {
+      if (username.value.length < 3) {
+        usernameError.value = 'Username must be at least 3 characters long'
+      } else {
+        usernameError.value = ''
+      }
+    }
 
-const reasonhasfriend = ref(false)
+    const validatePassword = () => {
+      if (password.value.length < 6) {
+        passwordError.value = 'Password must be at least 6 characters long'
+      } else {
+        passwordError.value = ''
+      }
+    }
 
-const validateName = (blur) => {
-  if (formData.value.username.length < 3) {
-    if (blur) errors.value.username = 'Name must be at least 3 characters'
-  } else {
-    errors.value.username = null
-  }
-}
+    const validateConfirmPassword = () => {
+      if (password.value !== confirmPassword.value) {
+        confirmPasswordError.value = 'Passwords do not match'
+      } else {
+        confirmPasswordError.value = ''
+      }
+    }
 
-const validatePassword = (blur) => {
-  const password = formData.value.password
-  const minLength = 8
-  const hasUppercase = /[A-Z]/.test(password)
-  const hasLowercase = /[a-z]/.test(password)
-  const hasNumber = /\d/.test(password)
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    const validatePhoneNumber = () => {
+      const phoneRegex = /^\d{10}$/
+      if (!phoneRegex.test(phoneNumber.value)) {
+        phoneNumberError.value = 'Please enter a valid 10-digit phone number'
+      } else {
+        phoneNumberError.value = ''
+      }
+    }
 
-  if (password.length < minLength) {
-    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
-  } else if (!hasUppercase) {
-    if (blur) errors.value.password = 'Password must contain at least one uppercase letter.'
-  } else if (!hasLowercase) {
-    if (blur) errors.value.password = 'Password must contain at least one lowercase letter.'
-  } else if (!hasNumber) {
-    if (blur) errors.value.password = 'Password must contain at least one number.'
-  } else if (!hasSpecialChar) {
-    if (blur) errors.value.password = 'Password must contain at least one special character.'
-  } else {
-    errors.value.password = null
-  }
-}
+    const isFormValid = computed(() => {
+      return username.value.length >= 3 &&
+             gender.value !== '' &&
+             password.value.length >= 6 &&
+             password.value === confirmPassword.value &&
+             phoneNumber.value.length === 10 &&
+             reason.value !== '' &&
+             !usernameError.value &&
+             !passwordError.value &&
+             !confirmPasswordError.value &&
+             !phoneNumberError.value
+    })
 
-const validateConfirmPassword = (blur) => {
-  if (formData.value.password !== formData.value.confirmPassword) {
-    if (blur) errors.value.confirmPassword = 'Passwords do not match.'
-  } else {
-    errors.value.confirmPassword = null
-  }
-}
+    const handleSubmit = () => {
+      if (isFormValid.value) {
+        const newUser = {
+          userId: username.value,
+          gender: gender.value,
+          password: password.value,
+          phoneNumber: phoneNumber.value,
+          reason: reason.value
+        }
 
-const validateReason = (blur) => {
-  if (formData.value.reason.length < 5) {
-    if (blur) errors.value.reason = 'Reason must be at least 5 characters.'
-  } else {
-    errors.value.reason = null
-  }
-}
+        // Get existing users or initialize an empty array
+        const users = JSON.parse(localStorage.getItem('users') || '[]')
+        
+        // Add new user
+        users.push(newUser)
 
-const submitForm = () => {
-  validateName(true)
-  validatePassword(true)
-  validateConfirmPassword(true)
-  validateReason(true)
+        // Save updated users array
+        localStorage.setItem('users', JSON.stringify(users))
 
-  if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword && !errors.value.reason) {
-    // Save to local storage
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
-    users.push({ ...formData.value })
-    localStorage.setItem('users', JSON.stringify(users))
+        // Redirect to login page
+        router.push('/login')
+      }
+    }
 
-    alert('Registration successful!')
-    clearForm()
-
-    // Redirect to the login page
-    router.push('/login')
-  }
-}
-
-const clearForm = () => {
-  formData.value = {
-    username: '',
-    password: '',
-    confirmPassword: '',
-    gender: '',
-    reason: '',
+    return {
+      username,
+      gender,
+      password,
+      confirmPassword,
+      phoneNumber,
+      reason,
+      usernameError,
+      passwordError,
+      confirmPasswordError,
+      phoneNumberError,
+      validateUsername,
+      validatePassword,
+      validateConfirmPassword,
+      validatePhoneNumber,
+      isFormValid,
+      handleSubmit
+    }
   }
 }
 </script>
@@ -184,27 +184,36 @@ const clearForm = () => {
 <style scoped>
 .register-page {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f8f9fa;
-  padding: 20px;
+  background-color: #ffffff;
+  padding: 20px 0;
+}
+
+h2 {
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
+  padding: 10px;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .register-container {
   background-color: #fff;
-  padding: 20px;
+  padding: 30px;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   text-align: center;
   max-width: 700px;
   width: 100%;
+  margin-top: 20px;
 }
 
-h2 {
-  color: #333;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
+.register-form {
+  display: flex;
+  flex-direction: column;
 }
 
 input, select, textarea {
@@ -213,20 +222,18 @@ input, select, textarea {
   margin-bottom: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-.text-danger {
-  color: #f44336;
+  font-size: 16px;
 }
 
 textarea {
-  resize: none;
+  height: 100px;
+  resize: vertical;
 }
 
-button {
+.register-button {
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #3367d6;
   color: white;
   border: none;
   border-radius: 4px;
@@ -235,7 +242,27 @@ button {
   font-weight: bold;
 }
 
-button.btn-secondary {
-  background-color: #6c757d;
+.register-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 30px;
+  color: #888;
+}
+
+.login-link a {
+  color: #f50057;
+  text-decoration: none;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  text-align: left;
 }
 </style>
