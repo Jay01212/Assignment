@@ -70,7 +70,6 @@
         }
       ]
     },
-    // Add more services here...
   ])
   
   const toggleService = (index) => {

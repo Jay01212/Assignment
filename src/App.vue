@@ -1,6 +1,5 @@
 <script setup>
 import Navigation from './components/Navigation.vue'
-import LibraryRegistrationForm from './views/HomeView.vue'
 </script>
 
 <template>

@@ -1,18 +1,3 @@
-<script>
-import { useAuthentication } from '../router/authentication'
-
-export default {
-  name: 'Navigation',
-  setup() {
-    const { isAuthentication, logout } = useAuthentication()
-    return {
-      isAuthentication,
-      logout
-    }
-  }
-}
-</script>
-
 <template>
   <nav class="navigation">
     <!-- Logo -->
@@ -25,7 +10,16 @@ export default {
           <router-link to="/" class="nav-link" active-class="active" aria-current="page">Home</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/article" class="nav-link" active-class="active">Article</router-link>
+          <router-link to="/about" class="nav-link" active-class="active" aria-current="page">About</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/resources" class="nav-link" active-class="active" aria-current="page">Resources</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/community" class="nav-link" active-class="active" aria-current="page">Community</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/emergency" class="nav-link" active-class="active" aria-current="page">Emergency Help</router-link>
         </li>
       </ul>
     </div>
@@ -43,6 +37,21 @@ export default {
     </div>
   </nav>
 </template>
+
+<script>
+import { useAuthentication } from '../router/authentication'
+
+export default {
+  name: 'Navigation',
+  setup() {
+    const { isAuthentication, logout } = useAuthentication()
+    return {
+      isAuthentication,
+      logout
+    }
+  }
+}
+</script>
 
 <style scoped>
 .navigation {
