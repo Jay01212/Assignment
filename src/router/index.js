@@ -68,6 +68,8 @@ const router = createRouter({
 const { isAuthentication } = useAuthentication()
 
 router.beforeEach((to, from, next) => {
+  const { isAuthentication } = useAuthentication()
+
   if (to.meta.requiresAuth && !isAuthentication.value) {
     alert('Your request has been denied because the user is not logged in')
     next('/login')
@@ -75,5 +77,6 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
 
 export default router
