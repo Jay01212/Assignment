@@ -65,7 +65,13 @@ export default {
 
     const handleSubmit = () => {
       isSubmitting.value = true
-      const users = JSON.parse(localStorage.getItem('users') || '[]')
+      // const users = JSON.parse(localStorage.getItem('users') || '[]')
+      
+      // Hard-coded user data for testing
+      const users = [
+        { userId: 'admin', password: '123456', userType: 'admin' },
+        { userId: 'user', password: '123456', userType: 'user' }
+      ]
 
       // Sanitize inputs
       const sanitizedUserId = sanitizeInput(userId.value)
