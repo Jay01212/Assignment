@@ -3,8 +3,9 @@
     <h2 class="text-dark fs-1 mb-4">{{ isLoginView ? 'Log Into Your Account' : 'Enter Password' }}</h2>
     <div class="login-container bg-white rounded shadow-sm p-4 w-100 max-w-md">
       <form @submit.prevent="handleSubmit" class="login-form">
-        <input v-model="userId" v-if="isLoginView" type="text" class="form-control mb-3" placeholder="User ID*" required>
-        
+        <input v-model="userId" v-if="isLoginView" type="text" class="form-control mb-3" placeholder="User ID*"
+          required>
+
         <!-- selecting roles -->
         <select v-model="selectedRole" v-if="isLoginView" class="form-control mb-3" required>
           <option value="" disabled>Select Role*</option>
@@ -12,11 +13,13 @@
           <option value="user">User</option>
         </select>
 
-        <input v-model="password" v-if="!isLoginView" type="password" class="form-control mb-3" placeholder="Password*" required>
+        <input v-model="password" v-if="!isLoginView" type="password" class="form-control mb-3" placeholder="Password*"
+          required>
         <p class="text-end mb-3 small" v-if="isLoginView">
           <router-link to="/forgot-user-id" class="text-muted text-decoration-none">Forgot User ID?</router-link>
         </p>
-        <button type="submit" class="btn btn-primary w-100 mb-3" :disabled="isSubmitting">{{ isLoginView ? 'Next' : 'Login' }}</button>
+        <button type="submit" class="btn btn-primary w-100 mb-3" :disabled="isSubmitting">{{ isLoginView ? 'Next' :
+          'Login' }}</button>
       </form>
       <div v-if="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
       <div class="social-login mt-4" v-if="isLoginView">
@@ -28,7 +31,8 @@
         </button>
       </div>
       <p class="mt-4 text-muted" v-if="isLoginView">
-        Don't have an account? <router-link to="/register" class="text-danger text-decoration-none">Get started now!</router-link>
+        Don't have an account? <router-link to="/register" class="text-danger text-decoration-none">Get started
+          now!</router-link>
       </p>
     </div>
 
@@ -65,13 +69,13 @@ export default {
 
     const handleSubmit = () => {
       isSubmitting.value = true
-      // const users = JSON.parse(localStorage.getItem('users') || '[]')
-      
+      const users = JSON.parse(localStorage.getItem('users') || '[]')
+
       // Hard-coded user data for testing
-      const users = [
-        { userId: 'admin', password: '123456', userType: 'admin' },
-        { userId: 'user', password: '123456', userType: 'user' }
-      ]
+      // const users = [
+      //   { userId: 'admin', password: '123456', userType: 'admin' },
+      //   { userId: 'user', password: '123456', userType: 'user' }
+      // ]
 
       // Sanitize inputs
       const sanitizedUserId = sanitizeInput(userId.value)
@@ -93,10 +97,10 @@ export default {
         if (validUser) {
           alert('Login successful!')
           setAuthentication(true)
-          
+
           // Jump to different pages according to user roles
           if (validUser.userType === 'admin') {
-            router.push({ name: 'About' }) 
+            router.push({ name: 'About' })
           } else {
             router.push({ name: 'Home' })
           }

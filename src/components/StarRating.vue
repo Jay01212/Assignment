@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 export default {
   name: 'RatingComponent',
@@ -21,11 +21,22 @@ export default {
     initialRating: {
       type: Number,
       default: 0
+    },
+    userId: {
+      type: String,
+      required: true
     }
   },
   setup(props) {
-    const userRating = ref(props.initialRating)
-    const ratings = ref(JSON.parse(localStorage.getItem('ratings') || '[]'))
+    const userRating = ref(0)
+    const ratings = ref([])
+
+    // Initialize ratings from local storage
+    onMounted(() => {
+      const storedRatings = JSON.parse(localStorage.getItem('ratings') || '{}')
+      ratings.value = storedRatings[props.userId] || []
+      userRating.value = ratings.value.length ? ratings.value[ratings.value.length - 1] : props.initialRating
+    })
 
     // Compute average rating
     const averageRating = computed(() => {
@@ -38,13 +49,19 @@ export default {
     const rate = (star) => {
       userRating.value = star
       ratings.value.push(star)
-      localStorage.setItem('ratings', JSON.stringify(ratings.value))
+      updateLocalStorage()
+    }
+
+    // Update local storage with the current user's ratings
+    const updateLocalStorage = () => {
+      const storedRatings = JSON.parse(localStorage.getItem('ratings') || '{}')
+      storedRatings[props.userId] = ratings.value
+      localStorage.setItem('ratings', JSON.stringify(storedRatings))
     }
 
     // Watch for changes and update local storage
     watch(userRating, (newRating) => {
-      ratings.value.push(newRating)
-      localStorage.setItem('ratings', JSON.stringify(ratings.value))
+      updateLocalStorage()
     })
 
     return {
