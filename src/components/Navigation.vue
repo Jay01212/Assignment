@@ -2,7 +2,7 @@
   <nav class="navigation">
     <!-- Logo -->
     <div class="logo">MyMentalHealth.com</div>
-    
+
     <!-- Nav-Center -->
     <div class="nav-center">
       <ul class="nav nav-pills">
@@ -13,17 +13,20 @@
           <a @click="handleNavClick('/about')" class="nav-link" :class="{ active: $route.path === '/about' }">About</a>
         </li>
         <li class="nav-item">
-          <a @click="handleNavClick('/resources')" class="nav-link" :class="{ active: $route.path === '/resources' }">Resources</a>
+          <a @click="handleNavClick('/resources')" class="nav-link"
+            :class="{ active: $route.path === '/resources' }">Resources</a>
         </li>
         <li class="nav-item">
-          <a @click="handleNavClick('/community')" class="nav-link" :class="{ active: $route.path === '/community' }">Community</a>
+          <a @click="handleNavClick('/community')" class="nav-link"
+            :class="{ active: $route.path === '/community' }">Community</a>
         </li>
         <li class="nav-item">
-          <a @click="handleNavClick('/emergency')" class="nav-link" :class="{ active: $route.path === '/emergency' }">Emergency Help</a>
+          <a @click="handleNavClick('/emergency')" class="nav-link"
+            :class="{ active: $route.path === '/emergency' }">Emergency Help</a>
         </li>
       </ul>
     </div>
-    
+
     <!-- Right Login/Logout -->
     <div class="nav-right">
       <ul class="nav nav-pills">
@@ -32,6 +35,9 @@
         </li>
         <li v-else class="nav-item">
           <button @click="logout" class="nav-link btn btn-link">Logout</button>
+        </li>
+        <li class="nav-item">
+          <router-link to="/Firelogin" class="nav-link" active-class="active">Firebase Login</router-link>
         </li>
       </ul>
     </div>

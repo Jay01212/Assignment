@@ -5,6 +5,7 @@ import RegisterPage from '../views/RegisterView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import ArticleDetail from '../views/ArticleDetail.vue'
 import { useAuthentication } from '../router/authentication'
+import FirebaseSigninView from '@/views/FirebaseSigninView.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     name: 'LoginPage',
     component: LoginPage,
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/Firelogin',
+    name: 'FireLogin',
+    component: FirebaseSigninView,
   },
   {
     path: '/about',
