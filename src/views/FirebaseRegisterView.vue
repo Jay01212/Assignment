@@ -2,7 +2,7 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <h1 class="text-center mb-4">W7. Sign in</h1>
+                <h1 class="text-center mb-4">W7. Create an Account</h1>
                 <form @submit.prevent="register" class="narrow-form">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
@@ -15,7 +15,7 @@
                             placeholder="Enter your password">
                     </div>
                     <div class="d-flex justify-content-center gap-2">
-                        <button type="submit" class="btn btn-primary" @click="signin">Sign in via Firebase</button>
+                        <button type="submit" class="btn btn-primary">Save to Firebase</button>
                         <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
                     </div>
                 </form>
@@ -26,7 +26,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "vue-router";
 
 const email = ref("");
@@ -34,24 +34,15 @@ const password = ref("");
 const router = useRouter();
 const auth = getAuth();
 
-const admin = "admin@gmail.com"
-
-const signin = () => {
-    signInWithEmailAndPassword(getAuth(), email.value, password.value)
+const register = () => {
+    createUserWithEmailAndPassword(auth, email.value, password.value)
         .then((data) => {
-            if (auth.currentUser.email == admin) {
-                alert("Admin Login successful!")
-                router.push("/Login")
-            }
-            else {
-                alert("Login successful!")
-                router.push("/")
-            }
-            console.log("Firebase Login Successful!")
-            console.log(auth.currentUser)
+            console.log("Firebase Register Successful!");
+            alert("Registration successful!")
+            router.push("/FireLogin");
         }).catch((error) => {
             console.log(error.code)
-            alert("Login failed!")
+            alert("Registration failed!")
         });
 };
 
