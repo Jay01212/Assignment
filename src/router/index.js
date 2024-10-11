@@ -66,19 +66,13 @@ const router = createRouter({
 const { isAuthentication } = useAuthentication()
 
 router.beforeEach((to, from, next) => {
-  const { isAuthentication } = useAuthentication()
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-  if (to.meta.requiresAuth && !isAuthentication.value) {
-    alert('Your request has been denied because the user is not logged in')
-    next('/login')
-  } else if (to.meta.requiresAdmin && currentUser.userType !== 'admin') {
-    alert('Your request has been denied because you are not an admin')
-    next('/')
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthentication.value) {
+    next({ name: 'LoginPage' })
+  } else if (to.matched.some(record => record.meta.requiresAdmin) && !isAuthentication.value) {
+    next({ name: 'LoginPage' }) // 或者直接重定向到错误页面
   } else {
     next()
   }
 })
-
 
 export default router

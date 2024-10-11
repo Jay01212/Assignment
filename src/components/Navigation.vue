@@ -24,6 +24,9 @@
           <a @click="handleNavClick('/emergency')" class="nav-link"
             :class="{ active: $route.path === '/emergency' }">Emergency Help</a>
         </li>
+        <!-- <li class="nav-item">
+          <router-link to="/send-email" class="nav-link" active-class="active">发送邮件</router-link>
+        </li> -->
       </ul>
     </div>
 
