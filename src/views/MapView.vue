@@ -267,7 +267,6 @@ export default {
         },
         showToast(message) {
             console.log('Toast:', message);
-            alert(message); // You can replace this with a more user-friendly toast notification
         },
         resetSearch() {
             console.log('Resetting search');
