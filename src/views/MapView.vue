@@ -4,19 +4,20 @@
             <div class="col-12">
                 <!-- 顶部搜索框 -->
                 <div class="search-bar mb-3">
-                    <input type="text" v-model="searchLocation" class="form-control" placeholder="在此处搜索地点" />
-                    <button class="btn btn-primary" @click="searchLocationHandler">搜索</button> <!-- 新增搜索按钮 -->
+                    <input type="text" v-model="searchLocation" class="form-control" placeholder="在此处搜索地点"
+                        @keyup.enter="searchLocationHandler" />
+                    <button class="btn btn-primary" @click="searchLocationHandler">搜索</button>
                 </div>
             </div>
         </div>
 
         <!-- 地图容器 -->
-        <div id="map" class="col-12" style="height: 80vh;"></div> <!-- 使用 Bootstrap 列布局和动态高度 -->
+        <div id="map" class="col-12" style="height: 80vh;"></div>
 
         <!-- 地点信息和路线 -->
         <div class="info-container" v-if="destinationName">
-            <h2>选择的地点: {{ destinationName }}</h2>
-            <button @click="getRoute">获取路线</button>
+            <h2>{{ destinationName }}</h2>
+            <button class="btn btn-secondary" @click="getRoute">获取路线</button>
         </div>
     </div>
 </template>
@@ -24,25 +25,24 @@
 <script>
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import mapboxSdk from '@mapbox/mapbox-sdk';
+import mapboxSdk from '@mapbox/mapbox-sdk/services/directions';
 
 export default {
     name: 'MapView',
     data() {
         return {
             map: null,
-            geocoder: null, // 新增 geocoder 属性
-            searchLocation: '', // 用户输入的搜索地点
-            destinationCoords: null, // 目的地坐标
-            destinationName: '', // 选择的地点名称
+            geocoder: null,
+            searchLocation: '',
+            destinationCoords: null,
+            destinationName: '',
             startCoords: [144.9631, -37.8136], // 默认出发地点：墨尔本的坐标
+            directionsClient: null,
         };
     },
     mounted() {
-        // 设置 Mapbox 访问 token
-        mapboxgl.accessToken = 'pk.eyJ1IjoiamlheXVhbmNoZW4iLCJhIjoiY20yNjB2dGJmMDUzOTJtcHZkcmFxczM3eCJ9.5-OtCLUJcB8-mWvEanj-_Q'; // 替换为你的 Mapbox token
+        mapboxgl.accessToken = 'pk.eyJ1IjoiamlheXVhbmNoZW4iLCJhIjoiY20yNjB2dGJmMDUzOTJtcHZkcmFxczM3eCJ9.5-OtCLUJcB8-mWvEanj-_Q';
 
-        // 初始化地图
         this.map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
@@ -50,130 +50,158 @@ export default {
             zoom: 12,
         });
 
-        // 添加缩放控件
         this.map.addControl(new mapboxgl.NavigationControl());
 
-        // 添加 Geocoder 控件用于搜索地点
         this.geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl,
-            marker: true,
+            marker: false,
             placeholder: '在此处搜索地点',
-            bbox: [144.5, -38.0, 145.5, -37.5], // 限制搜索区域
-            countries: 'AU', // 限制搜索国家
+            bbox: [144.5, -38.0, 145.5, -37.5],
+            countries: 'AU',
         });
 
-        // 将 Geocoder 添加到地图
-        this.map.addControl(this.geocoder); // 使用 this.geocoder
+        // 将 geocoder 添加到地图
+        this.map.addControl(this.geocoder);
 
-        // 监听搜索结果
-        this.geocoder.on('result', (e) => {
+        // 直接为 geocoder 添加 result 事件监听器
+        this.geocoder.on('result', this.handleGeocoderResult);
+
+        // 初始化 directionsClient
+        this.directionsClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+    },
+    methods: {
+        handleGeocoderResult(e) {
             const coordinates = e.result.geometry.coordinates;
-            this.destinationCoords = coordinates; // 更新目的地坐标
-            this.destinationName = e.result.text; // 更新目的地名称
+            this.destinationCoords = coordinates;
+            this.destinationName = e.result.place_name;
+            this.searchLocation = e.result.place_name;
+            this.updateMap(coordinates);
+        },
+        updateMap(coordinates) {
             this.map.flyTo({
                 center: coordinates,
                 zoom: 14,
             });
 
-            // 添加标记到地图
-            new mapboxgl.Marker()
-                .setLngLat(coordinates)
-                .addTo(this.map);
-        });
-    },
-    methods: {
+            // 移除之前的标记（如果有）
+            const existingMarker = this.map.getLayer('destination-marker');
+            if (existingMarker) {
+                this.map.removeLayer('destination-marker');
+                this.map.removeSource('destination-marker');
+            }
+
+            // 添加新的标记
+            this.map.addSource('destination-marker', {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: [{
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: coordinates
+                        }
+                    }]
+                }
+            });
+
+            this.map.addLayer({
+                id: 'destination-marker',
+                type: 'circle',
+                source: 'destination-marker',
+                paint: {
+                    'circle-radius': 10,
+                    'circle-color': '#ff0000'
+                }
+            });
+        },
         async searchLocationHandler() {
             if (!this.searchLocation) {
                 alert('请输入一个地点！');
                 return;
             }
-            // 使用 Geocoder 搜索用户输入的地点
-            this.geocoder.query(this.searchLocation, (err, data) => {
-                if (data && data.features.length) {
-                    const coordinates = data.features[0].geometry.coordinates;
-                    this.destinationCoords = coordinates; // 更新目的地坐标
-                    this.destinationName = data.features[0].place_name; // 更新目的地名称
-                    this.map.flyTo({
-                        center: coordinates,
-                        zoom: 14,
-                    });
+            const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.searchLocation)}.json?access_token=${mapboxgl.accessToken}&country=AU`);
+            const data = await response.json();
 
-                    // 添加标记到地图
-                    new mapboxgl.Marker()
-                        .setLngLat(coordinates)
-                        .addTo(this.map);
-                } else {
-                    alert('没有找到该地点，请重试。');
-                }
-            });
+            if (data.features && data.features.length > 0) {
+                const result = data.features[0];
+                this.handleGeocoderResult({ result });
+            } else {
+                alert('没有找到该地点，请重试。');
+            }
         },
-
         async getRoute() {
             if (!this.destinationCoords) {
                 alert('请选择一个目的地！');
                 return;
             }
 
-            // 使用 Mapbox SDK 进行路线规划
-            const mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
-            const directionsClient = mapboxClient.directions;
-
-            // 调试，确保 directionsClient 不为 undefined
-            console.log('Directions Client:', directionsClient);
-
             try {
-                // 获取从用户选择的出发地到目的地的路线
-                const response = await directionsClient
-                    .getDirections({
-                        waypoints: [
-                            { coordinates: this.startCoords }, // 起点
-                            { coordinates: this.destinationCoords }, // 终点
-                        ],
-                        profile: 'driving', // 导航类型
-                        geometries: 'geojson',
-                    })
-                    .send();
+                const response = await this.directionsClient.getDirections({
+                    profile: 'driving-traffic',
+                    geometries: 'geojson',
+                    waypoints: [
+                        { coordinates: this.startCoords },
+                        { coordinates: this.destinationCoords },
+                    ],
+                }).send();
+
+                if (response.body.routes.length === 0) {
+                    alert('未找到可用的路线，请重试。');
+                    return;
+                }
 
                 const route = response.body.routes[0].geometry;
 
-                // 添加路线到地图
+                // 移除之前的路线（如果有）
+                if (this.map.getSource('route')) {
+                    this.map.removeLayer('route');
+                    this.map.removeSource('route');
+                }
+
+                this.map.addSource('route', {
+                    type: 'geojson',
+                    data: {
+                        type: 'Feature',
+                        properties: {},
+                        geometry: route
+                    }
+                });
+
                 this.map.addLayer({
                     id: 'route',
                     type: 'line',
-                    source: {
-                        type: 'geojson',
-                        data: {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: route,
-                        },
-                    },
+                    source: 'route',
                     layout: {
                         'line-join': 'round',
-                        'line-cap': 'round',
+                        'line-cap': 'round'
                     },
                     paint: {
                         'line-color': '#3887be',
                         'line-width': 5,
-                        'line-opacity': 0.75,
-                    },
+                        'line-opacity': 0.75
+                    }
                 });
 
-                // 缩放地图以适应路线
-                const bounds = route.coordinates.reduce(function (bounds, coord) {
-                    return bounds.extend(coord);
-                }, new mapboxgl.LngLatBounds(route.coordinates[0], route.coordinates[0]));
+                const bounds = new mapboxgl.LngLatBounds(
+                    this.startCoords,
+                    this.destinationCoords
+                );
+
+                route.coordinates.forEach((coord) => {
+                    bounds.extend(coord);
+                });
 
                 this.map.fitBounds(bounds, {
-                    padding: 20,
+                    padding: 50
                 });
+
             } catch (error) {
                 console.error('获取路线时出错:', error);
                 alert('获取路线时出错，请重试。');
             }
         }
-
     },
 };
 </script>
@@ -182,11 +210,24 @@ export default {
 #map {
     width: 100%;
     height: 80vh;
-    /* 确保地图占据 80% 的视口高度 */
+}
+
+.search-bar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 1;
+    display: flex;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    margin-right: 10px;
 }
 
 .info-container {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
@@ -195,10 +236,12 @@ export default {
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
+    text-align: center;
 }
 
 h2 {
     margin: 0 0 10px 0;
+    font-size: 1.2em;
 }
 
 button {
