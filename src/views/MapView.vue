@@ -1,13 +1,17 @@
 <template>
-    <div class="map-container">
-        <!-- 顶部搜索框 -->
-        <div class="search-bar">
-            <input type="text" v-model="searchLocation" placeholder="在此处搜索地点" />
-            <button @click="searchLocationHandler">搜索</button> <!-- 新增搜索按钮 -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- 顶部搜索框 -->
+                <div class="search-bar mb-3">
+                    <input type="text" v-model="searchLocation" class="form-control" placeholder="在此处搜索地点" />
+                    <button class="btn btn-primary" @click="searchLocationHandler">搜索</button> <!-- 新增搜索按钮 -->
+                </div>
+            </div>
         </div>
 
         <!-- 地图容器 -->
-        <div id="map"></div>
+        <div id="map" class="col-12" style="height: 80vh;"></div> <!-- 使用 Bootstrap 列布局和动态高度 -->
 
         <!-- 地点信息和路线 -->
         <div class="info-container" v-if="destinationName">
@@ -115,6 +119,9 @@ export default {
             const mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
             const directionsClient = mapboxClient.directions;
 
+            // 调试，确保 directionsClient 不为 undefined
+            console.log('Directions Client:', directionsClient);
+
             try {
                 // 获取从用户选择的出发地到目的地的路线
                 const response = await directionsClient
@@ -165,36 +172,17 @@ export default {
                 console.error('获取路线时出错:', error);
                 alert('获取路线时出错，请重试。');
             }
-        },
+        }
+
     },
 };
 </script>
 
 <style scoped>
-.map-container {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-}
-
-.search-bar {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-    display: flex;
-    /* 使用 flexbox */
-}
-
-.search-bar input {
-    margin-right: 5px;
-    /* 输入框与按钮之间的间距 */
-}
-
 #map {
     width: 100%;
-    height: 100%;
+    height: 80vh;
+    /* 确保地图占据 80% 的视口高度 */
 }
 
 .info-container {
