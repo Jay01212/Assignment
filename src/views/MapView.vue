@@ -1,11 +1,16 @@
 <template>
     <div class="map-container">
-        <div class="search-bar">
-            <input type="text" v-model="startLocation" class="form-control" placeholder="设置起点"
-                @keyup.enter="setStartLocation" />
-            <input type="text" v-model="endLocation" class="form-control" placeholder="设置终点"
-                @keyup.enter="setEndLocation" />
-            <button class="btn btn-primary" @click="getRoute">获取路线</button>
+        <div class="search-bar" v-if="!showDirectionsInput">
+            <input type="text" v-model="searchQuery" @keyup.enter="searchLocation" placeholder="搜索感兴趣的地点" />
+            <button @click="searchLocation">搜索</button>
+        </div>
+        <div v-if="showDirectionsInput" class="directions-panel">
+            <button class="back-button" @click="resetSearch">&larr; 返回</button>
+            <div class="directions-input">
+                <input type="text" v-model="startLocation" placeholder="起点" @keyup.enter="setStartLocation" />
+                <input type="text" v-model="endLocation" placeholder="终点" @keyup.enter="setEndLocation" />
+                <button @click="getRoute">获取路线</button>
+            </div>
         </div>
         <div id="map"></div>
         <div class="info-container" v-if="routeInfo">
@@ -33,15 +38,16 @@ export default {
     data() {
         return {
             map: null,
-            geocoder: null,
+            searchQuery: '',
             startLocation: '',
             endLocation: '',
-            startCoords: [144.9631, -37.8136], // 默认起点：墨尔本的坐标
+            startCoords: null,
             endCoords: null,
-            startLocationName: '墨尔本',
+            startLocationName: '',
             endLocationName: '',
             directionsClient: null,
             routeInfo: null,
+            showDirectionsInput: false,
         };
     },
     async mounted() {
@@ -49,28 +55,46 @@ export default {
     },
     methods: {
         async initializeMap() {
-            mapboxgl.accessToken = 'pk.eyJ1IjoiamlheXVhbmNoZW4iLCJhIjoiY20yNjB2dGJmMDUzOTJtcHZkcmFxczM3eCJ9.5-OtCLUJcB8-mWvEanj-_Q'; // 请替换为您的实际token
+            mapboxgl.accessToken = 'pk.eyJ1IjoiamlheXVhbmNoZW4iLCJhIjoiY20yNjB2dGJmMDUzOTJtcHZkcmFxczM3eCJ9.5-OtCLUJcB8-mWvEanj-_Q';
 
             this.map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v11',
-                center: this.startCoords,
+                center: [144.9631, -37.8136], // Melbourne coordinates
                 zoom: 12,
             });
 
             await new Promise(resolve => this.map.on('load', resolve));
 
-            // 确保地图加载完成后再添加控件
             this.map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
             const mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
             this.directionsClient = MapboxDirections(mapboxClient);
 
             this.map.on('click', this.handleMapClick);
-
-            // 添加起点标记
-            new mapboxgl.Marker({ color: '#3887be' })
-                .setLngLat(this.startCoords)
+        },
+        async searchLocation() {
+            try {
+                const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.searchQuery)}.json?access_token=${mapboxgl.accessToken}&country=AU`);
+                const data = await response.json();
+                if (data.features && data.features.length > 0) {
+                    const [lng, lat] = data.features[0].center;
+                    this.map.flyTo({ center: [lng, lat], zoom: 14 });
+                    this.addMarker([lng, lat]);
+                    this.showDirectionsInput = true;
+                    this.endLocation = data.features[0].place_name;
+                    this.endCoords = [lng, lat];
+                } else {
+                    this.showToast('没有找到该地点，请重试。');
+                }
+            } catch (error) {
+                console.error('搜索地点时出错:', error);
+                this.showToast('搜索地点时出错，请重试。');
+            }
+        },
+        addMarker(coords) {
+            new mapboxgl.Marker()
+                .setLngLat(coords)
                 .addTo(this.map);
         },
         async setStartLocation() {
@@ -78,7 +102,7 @@ export default {
             if (coords) {
                 this.startCoords = coords;
                 this.startLocationName = this.startLocation;
-                this.updateMap();
+                this.addMarker(coords);
             }
         },
         async setEndLocation() {
@@ -86,7 +110,7 @@ export default {
             if (coords) {
                 this.endCoords = coords;
                 this.endLocationName = this.endLocation;
-                this.updateMap();
+                this.addMarker(coords);
             }
         },
         async geocodeLocation(location) {
@@ -105,75 +129,15 @@ export default {
                 return null;
             }
         },
-        updateMap() {
-            // 清除之前的标记和路线
-            this.map.getSource('start') && this.map.removeLayer('start') && this.map.removeSource('start');
-            this.map.getSource('end') && this.map.removeLayer('end') && this.map.removeSource('end');
-            this.map.getSource('route') && this.map.removeLayer('route') && this.map.removeSource('route');
-
-            // 添加起点标记
-            this.map.addSource('start', {
-                type: 'geojson',
-                data: {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: this.startCoords
-                    }
-                }
-            });
-            this.map.addLayer({
-                id: 'start',
-                type: 'circle',
-                source: 'start',
-                paint: {
-                    'circle-radius': 10,
-                    'circle-color': '#3887be'
-                }
-            });
-
-            // 如果有终点，添加终点标记
-            if (this.endCoords) {
-                this.map.addSource('end', {
-                    type: 'geojson',
-                    data: {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: this.endCoords
-                        }
-                    }
-                });
-                this.map.addLayer({
-                    id: 'end',
-                    type: 'circle',
-                    source: 'end',
-                    paint: {
-                        'circle-radius': 10,
-                        'circle-color': '#f30'
-                    }
-                });
-
-                // 调整地图视图以包含起点和终点
-                const bounds = new mapboxgl.LngLatBounds()
-                    .extend(this.startCoords)
-                    .extend(this.endCoords);
-                this.map.fitBounds(bounds, { padding: 100 });
-            } else {
-                // 如果只有起点，将地图中心设置为起点
-                this.map.flyTo({
-                    center: this.startCoords,
-                    zoom: 12
-                });
-            }
-        },
         async getRoute() {
-            if (!this.endCoords || !this.directionsClient) {
-                this.showToast('请设置终点并确保方向服务已初始化！');
+            if (!this.startCoords || !this.endCoords) {
+                this.showToast('请设置起点和终点！');
                 return;
             }
 
             try {
+                this.removeExistingRoute();
+
                 const response = await this.directionsClient.getDirections({
                     profile: 'driving-traffic',
                     geometries: 'geojson',
@@ -230,6 +194,14 @@ export default {
                 this.showToast('获取路线时出错，请重试。');
             }
         },
+        removeExistingRoute() {
+            if (this.map.getLayer('route')) {
+                this.map.removeLayer('route');
+            }
+            if (this.map.getSource('route')) {
+                this.map.removeSource('route');
+            }
+        },
         formatDuration(seconds) {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
@@ -239,38 +211,41 @@ export default {
             return `${(meters / 1000).toFixed(2)} 公里`;
         },
         handleMapClick(e) {
-            if (!this.endCoords) {
-                this.endCoords = [e.lngLat.lng, e.lngLat.lat];
-                this.reverseGeocode(this.endCoords);
-            } else {
-                this.startCoords = [e.lngLat.lng, e.lngLat.lat];
-                this.reverseGeocode(this.startCoords, true);
-            }
-            this.updateMap();
+            const [lng, lat] = [e.lngLat.lng, e.lngLat.lat];
+            this.addMarker([lng, lat]);
+            this.reverseGeocode([lng, lat]);
         },
-        async reverseGeocode(coords, isStart = false) {
+        async reverseGeocode(coords) {
             const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json?access_token=${mapboxgl.accessToken}`);
             const data = await response.json();
             if (data.features && data.features.length > 0) {
-                if (isStart) {
-                    this.startLocationName = data.features[0].place_name;
-                    this.startLocation = data.features[0].place_name;
+                const placeName = data.features[0].place_name;
+                if (!this.startLocation) {
+                    this.startLocation = placeName;
+                    this.startCoords = coords;
                 } else {
-                    this.endLocationName = data.features[0].place_name;
-                    this.endLocation = data.features[0].place_name;
+                    this.endLocation = placeName;
+                    this.endCoords = coords;
                 }
-            } else {
-                if (isStart) {
-                    this.startLocationName = '未知地点';
-                    this.startLocation = '未知地点';
-                } else {
-                    this.endLocationName = '未知地点';
-                    this.endLocation = '未知地点';
-                }
+                this.showDirectionsInput = true;
             }
         },
         showToast(message) {
             alert(message); // 您可以替换为更友好的toast通知
+        },
+        resetSearch() {
+            this.showDirectionsInput = false;
+            this.searchQuery = '';
+            this.startLocation = '';
+            this.endLocation = '';
+            this.startCoords = null;
+            this.endCoords = null;
+            this.startLocationName = '';
+            this.endLocationName = '';
+            this.routeInfo = null;
+            this.removeExistingRoute();
+            this.map.setZoom(12);
+            this.map.setCenter([144.9631, -37.8136]); // Reset to Melbourne
         }
     },
 };
@@ -288,36 +263,53 @@ export default {
     height: 100%;
 }
 
-.search-bar {
+.search-bar,
+.directions-panel {
     position: absolute;
     top: 10px;
     left: 10px;
     right: 10px;
     z-index: 1;
+    background-color: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
     display: flex;
     gap: 10px;
 }
 
-.search-bar input {
+.directions-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.directions-input {
+    display: flex;
+    gap: 10px;
+}
+
+.search-bar input,
+.directions-input input {
     flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .info-container {
     position: absolute;
     bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 10px;
     background-color: white;
     padding: 15px;
-    border-radius: 5px;
+    border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    text-align: center;
-}
-
-h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.2em;
+    max-width: 300px;
 }
 
 button {
@@ -325,11 +317,23 @@ button {
     background-color: #3887be;
     color: white;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 button:hover {
     background-color: #285f8a;
+}
+
+.back-button {
+    align-self: flex-start;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.back-button:hover {
+    background-color: #e0e0e0;
 }
 
 .route-info {
