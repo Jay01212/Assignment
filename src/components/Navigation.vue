@@ -27,6 +27,9 @@
         <li class="nav-item">
           <router-link to="/EventsTable" class="nav-link" active-class="active">Events</router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/Map" class="nav-link" active-class="active">Map</router-link>
+        </li>
       </ul>
     </div>
 
