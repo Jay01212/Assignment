@@ -24,6 +24,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref } from "vue";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
