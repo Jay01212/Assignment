@@ -15,7 +15,7 @@
             :class="{ active: $route.path === '/community' }">Community</a></li>
         <li class="nav-item"><a @click="handleNavClick('/emergency')" class="nav-link"
             :class="{ active: $route.path === '/emergency' }">Emergency Help</a></li>
-        <li class="nav-item"><router-link to="/EventsTable" class="nav-link" active-class="active">Events</router-link>
+        <li class="nav-item"><router-link to="/Events" class="nav-link" active-class="active">Events</router-link>
         </li>
         <li class="nav-item"><router-link to="/Map" class="nav-link" active-class="active">Map</router-link></li>
       </ul>

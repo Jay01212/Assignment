@@ -7,7 +7,7 @@ import ArticleDetail from '../views/ArticleDetail.vue'
 import { useAuthentication } from '../router/authentication'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
-import EventsTableView from '@/views/EventsTableView.vue'
+import EventsView from '@/views/EventsView.vue'
 import MapView from '@/views/MapView.vue'
 
 const routes = [
@@ -40,9 +40,9 @@ const routes = [
     component: FirebaseRegisterView
   },
   {
-    path: '/EventsTable',
-    name: 'EventsTable',
-    component: EventsTableView
+    path: '/Events',
+    name: 'Events',
+    component: EventsView
   },
   {
     path: '/Map',
