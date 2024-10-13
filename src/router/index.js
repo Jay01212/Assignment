@@ -41,9 +41,10 @@ const routes = [
     component: FirebaseRegisterView
   },
   {
-    path: '/AdminDashboard',
+    path: '/admin-dashboard',
     name: 'AdminDashboard',
-    component: AdminDashboard
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: '/Events',
