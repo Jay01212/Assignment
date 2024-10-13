@@ -18,7 +18,10 @@
         <li class="nav-item"><router-link to="/Events" class="nav-link" active-class="active">Events</router-link>
         </li>
         <li class="nav-item"><router-link to="/Map" class="nav-link" active-class="active">Map</router-link></li>
+        <li class="nav-item"><router-link to="/AdminDashboard" class="nav-link"
+            active-class="active">Admin</router-link></li>
       </ul>
+
       <ul class="nav-right">
         <li v-if="!isAuthentication" class="nav-item"><router-link to="/login" class="nav-link"
             active-class="active">Login</router-link></li>
