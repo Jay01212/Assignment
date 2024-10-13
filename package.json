@@ -36,7 +36,7 @@
     "primeicons": "^7.0.0",
     "primevue": "^4.1.0",
     "vue": "^3.5.12",
-    "vue-chartjs": "^3.1.1",
+    "vue-chartjs": "^5.3.1",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
