@@ -1,16 +1,17 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'
+import userRouter from './router/userindex'
+import adminRouter from './router/adminindex'
 
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -23,10 +24,25 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
 
-const app = createApp(App)
-app.use(PrimeVue, { theme: { preset: Aura } })
-app.use(router)
+const app = createApp(App);
 
-app.mount('#app')
+// 使用 PrimeVue
+app.use(PrimeVue, { theme: { preset: Aura } });
+
+// 根据用户的角色选择正确的路由
+onAuthStateChanged(auth, (user) => {
+  if (user && user.email.endsWith('@admin.com')) {
+    app.use(adminRouter);
+  } else {
+    app.use(userRouter);
+  }
+
+  // 只在认证状态改变后挂载应用
+  if (!app._isMounted) {
+    app.mount('#app');
+    app._isMounted = true;
+  }
+});

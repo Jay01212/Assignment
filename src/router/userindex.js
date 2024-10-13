@@ -2,12 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/HomeView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import ArticleDetail from '../views/ArticleDetail.vue'
-import { useAuthentication } from '../router/authentication'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
-import AdminDashboard from '@/views/AdminDashboard.vue'
 import EventsView from '@/views/EventsView.vue'
 import MapView from '@/views/MapView.vue'
+import { getAuth } from 'firebase/auth'
 
 const routes = [
   {
@@ -25,12 +24,6 @@ const routes = [
     path: '/FireRegister',
     name: 'FireRegister',
     component: FirebaseRegisterView
-  },
-  {
-    path: '/admin-dashboard',
-    name: 'AdminDashboard',
-    component: AdminDashboard,
-    meta: { requiresAuth: true, requiresAdmin: true, layout: 'admin' }
   },
   {
     path: '/Events',
@@ -67,16 +60,17 @@ const router = createRouter({
   routes
 })
 
-const { isAuthenticated, isAdmin } = useAuthentication()
-
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated.value) {
-    next({ name: 'FireLogin' })
-  } else if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin.value) {
-    next({ name: 'Home' })
-  } else {
-    next()
-  }
+  const auth = getAuth()
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+
+  auth.onAuthStateChanged((user) => {
+    if (requiresAuth && !user) {
+      next('/Firelogin')
+    } else {
+      next()
+    }
+  })
 })
 
 export default router
