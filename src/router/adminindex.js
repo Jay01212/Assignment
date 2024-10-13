@@ -5,7 +5,7 @@ import { getAuth } from 'firebase/auth'
 
 const routes = [
     {
-        path: '/admin',
+        path: '/admin-dashboard',  // 更改这里
         name: 'AdminDashboard',
         component: AdminDashboard,
         meta: { requiresAuth: true, requiresAdmin: true }

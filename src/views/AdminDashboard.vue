@@ -9,9 +9,9 @@
             <nav>
               <ul class="nav flex-column">
                 <li class="nav-item">
-                  <a class="nav-link" href="#" @click="setActiveView('dashboard')">
+                  <router-link class="nav-link" to="/admin">
                     <i class="fas fa-home"></i> 首页
-                  </a>
+                  </router-link>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#" @click="setActiveView('activities')">
@@ -29,9 +29,9 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#" @click="setActiveView('emails')">
+                  <router-link class="nav-link" to="/admin/email">
                     <i class="fas fa-envelope"></i> 邮件管理
-                  </a>
+                  </router-link>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#" @click="setActiveView('analysis')">
@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-9">
           <!-- 主内容区 -->
-          <component :is="currentViewComponent"></component>
+          <router-view></router-view>
         </div>
       </div>
     </div>
@@ -53,33 +53,18 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getAuth, signOut } from 'firebase/auth';
-import TreatmentPlans from '@/components/TreatmentPlans.vue';
-import EmailManagement from '@/components/EmailManagement.vue';
 
 export default {
   name: 'AdminDashboard',
   setup() {
     const router = useRouter();
-    const activeView = ref(localStorage.getItem('activeAdminView') || 'dashboard');
-
-    const currentViewComponent = computed(() => {
-      switch (activeView.value) {
-        case 'dashboard': return DashboardOverview;
-        case 'activities': return Activities;
-        case 'users': return Users;
-        case 'treatments': return TreatmentPlans;
-        case 'emails': return EmailManagement;
-        case 'analysis': return DataAnalysis;
-        default: return DashboardOverview;
-      }
-    });
+    const activeView = ref('dashboard');
 
     const setActiveView = (view) => {
       activeView.value = view;
-      localStorage.setItem('activeAdminView', view);
     };
 
     const logout = async () => {
@@ -92,19 +77,8 @@ export default {
       }
     };
 
-    onMounted(() => {
-      // 检查用户认证状态
-      const auth = getAuth();
-      auth.onAuthStateChanged((user) => {
-        if (!user) {
-          router.push('/FireLogin');
-        }
-      });
-    });
-
     return {
       activeView,
-      currentViewComponent,
       setActiveView,
       logout
     };
