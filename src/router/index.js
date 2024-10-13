@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/HomeView.vue'
-import LoginPage from '../views/LoginView.vue'
-import RegisterPage from '../views/RegisterView.vue'
 import LibraryView from '../views/LibraryView.vue'
 import ArticleDetail from '../views/ArticleDetail.vue'
 import { useAuthentication } from '../router/authentication'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
+import AdminDashboard from '@/views/AdminDashboard.vue'
 import EventsView from '@/views/EventsView.vue'
 import MapView from '@/views/MapView.vue'
 
@@ -18,18 +17,6 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
-    path: '/register',
-    name: 'RegisterPage',
-    component: RegisterPage,
-    meta: { requiresAuth: false }
-  },
-  {
-    path: '/login',
-    name: 'LoginPage',
-    component: LoginPage,
-    meta: { requiresAuth: false }
-  },
-  {
     path: '/Firelogin',
     name: 'FireLogin',
     component: FirebaseSigninView,
@@ -38,6 +25,12 @@ const routes = [
     path: '/FireRegister',
     name: 'FireRegister',
     component: FirebaseRegisterView
+  },
+  {
+    path: '/admin-dashboard',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true, layout: 'admin' }
   },
   {
     path: '/Events',
@@ -53,7 +46,7 @@ const routes = [
     path: '/about',
     name: 'About',
     component: () => import('../views/AboutView.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    meta: { requiresAuth: true }
   },
   {
     path: '/library',
@@ -74,14 +67,13 @@ const router = createRouter({
   routes
 })
 
-// Using local variables to store authentication status
-const { isAuthentication } = useAuthentication()
+const { isAuthenticated, isAdmin } = useAuthentication()
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthentication.value) {
-    next({ name: 'LoginPage' })
-  } else if (to.matched.some(record => record.meta.requiresAdmin) && !isAuthentication.value) {
-    next({ name: 'LoginPage' }) // 或者直接重定向到错误页面
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated.value) {
+    next({ name: 'FireLogin' })
+  } else if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin.value) {
+    next({ name: 'Home' })
   } else {
     next()
   }

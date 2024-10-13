@@ -1,26 +1,37 @@
 <template>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h1 class="text-center mb-4">W7. Sign in</h1>
-                <form @submit.prevent="register" class="narrow-form">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control bg-white" id="email" v-model="email" required
-                            placeholder="Enter your email">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control bg-white" id="password" v-model="password" required
-                            placeholder="Enter your password">
-                    </div>
-                    <div class="d-flex justify-content-center gap-2">
-                        <button type="submit" class="btn btn-primary" @click="signin">Sign in via Firebase</button>
-                        <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
-                    </div>
-                </form>
+    <div class="d-flex flex-column min-vh-100">
+        <div class="container flex-grow-1 d-flex align-items-center">
+            <div class="row justify-content-center w-100">
+                <div class="col-md-6 col-lg-4">
+                    <h1 class="text-center mb-4">Log Into Your Account</h1>
+                    <form @submit.prevent="signin" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" v-model="email" required
+                                placeholder="Email*">
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" v-model="password" required
+                                placeholder="Password*">
+                            <div class="invalid-feedback">Please enter your password.</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Sign In</button>
+                            <button type="button" class="btn btn-outline-secondary" disabled>Continue with
+                                Google</button>
+                            <button type="button" class="btn btn-outline-primary" disabled>Continue with
+                                Facebook</button>
+                        </div>
+                    </form>
+                    <p class="text-center mt-3">
+                        Don't have an account? <router-link to="/FireRegister">Get started now!</router-link>
+                    </p>
+                </div>
             </div>
         </div>
+        <FooterComponent />
     </div>
 </template>
 
@@ -28,66 +39,54 @@
 import { ref } from "vue";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "vue-router";
+import FooterComponent from '@/components/FooterComponent.vue';
+import { useAuthentication } from '@/router/authentication';
 
 const email = ref("");
 const password = ref("");
 const router = useRouter();
 const auth = getAuth();
-
-const admin = "admin@gmail.com"
+const { setAuthStatus } = useAuthentication();
 
 const signin = () => {
-    signInWithEmailAndPassword(getAuth(), email.value, password.value)
-        .then((data) => {
-            if (auth.currentUser.email == admin) {
-                alert("Admin Login successful!")
-                router.push("/Login")
+    signInWithEmailAndPassword(auth, email.value, password.value)
+        .then((userCredential) => {
+            console.log("Firebase Login Successful!");
+            const isAdmin = email.value === "admin@gmail.com";
+            setAuthStatus(true, isAdmin);
+            if (isAdmin) {
+                router.push("/admin-dashboard");
+            } else {
+                router.push("/");
             }
-            else {
-                alert("Login successful!")
-                router.push("/")
-            }
-            console.log("Firebase Login Successful!")
-            console.log(auth.currentUser)
         }).catch((error) => {
-            console.log(error.code)
-            alert("Login failed!")
+            console.error(error.code, error.message);
+            alert("Login failed: " + error.message);
         });
-};
-
-const clearForm = () => {
-    email.value = "";
-    password.value = "";
 };
 </script>
 
 <style scoped>
-.narrow-form {
-    max-width: 300px;
-    margin: 0 auto;
+.form-control {
+    border-radius: 20px;
 }
 
-.form-control {
-    border: 1px solid #ced4da;
+.btn {
+    border-radius: 20px;
+    padding: 10px 20px;
 }
 
 .btn-primary {
-    background-color: #275fda;
-    border-color: #4285f4;
+    background-color: #4a90e2;
+    border-color: #4a90e2;
 }
 
-.btn-primary:hover {
-    background-color: #1c4cb3;
-    border-color: #1c4cb3;
+a {
+    color: #4a90e2;
+    text-decoration: none;
 }
 
-.btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-    border-color: #5a6268;
+a:hover {
+    text-decoration: underline;
 }
 </style>
