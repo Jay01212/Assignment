@@ -10,6 +10,7 @@ import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
 import EventsView from '@/views/EventsView.vue'
 import MapView from '@/views/MapView.vue'
 import AdminDashboard from '@/views/AdminDashboard.vue'
+import { getAuth } from 'firebase/auth'
 
 const routes = [
   {
@@ -85,10 +86,19 @@ const router = createRouter({
 const { isAuthentication } = useAuthentication()
 
 router.beforeEach((to, from, next) => {
+  const auth = getAuth()
+  const user = auth.currentUser
+
   if (to.matched.some(record => record.meta.requiresAuth) && !isAuthentication.value) {
-    next({ name: 'LoginPage' })
-  } else if (to.matched.some(record => record.meta.requiresAdmin) && !isAuthentication.value) {
-    next({ name: 'LoginPage' }) // 或者直接重定向到错误页面
+    next({ name: 'FireLogin' })
+  } else if (to.matched.some(record => record.meta.requiresAdmin)) {
+    if (!isAuthentication.value) {
+      next({ name: 'FireLogin' })
+    } else if (user && user.email === 'admin@gmail.com') {
+      next()
+    } else {
+      next({ name: 'Home' })
+    }
   } else {
     next()
   }
