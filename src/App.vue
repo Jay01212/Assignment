@@ -1,25 +1,46 @@
 <template>
-  <header>
-    <Navigation />
-  </header>
-
-  <main>
-    <router-view></router-view>
-  </main>
+  <div id="app">
+    <template v-if="$route.meta.layout !== 'admin'">
+      <header>
+        <Navigation />
+      </header>
+      <main>
+        <router-view></router-view>
+      </main>
+    </template>
+    <template v-else>
+      <router-view></router-view>
+    </template>
+  </div>
 </template>
 
 <script setup>
 import Navigation from './components/Navigation.vue'
 </script>
 
-<style scoped>
-.container {
+<style>
+body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.container {
   max-width: 80vw;
   margin: 0 auto;
   padding: 20px;
   border-radius: 10px;
-  background-color: #f4f4f4; /* Optional: A lighter background color */
+  background-color: #f4f4f4;
 }
 
 /* Form styles */
@@ -47,5 +68,15 @@ import Navigation from './components/Navigation.vue'
 
 .list-group-item {
   padding: 10px;
+}
+
+/* Additional styles for admin layout */
+.admin-layout {
+  display: flex;
+}
+
+.admin-layout main {
+  flex: 1;
+  padding: 20px;
 }
 </style>

@@ -1,27 +1,23 @@
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
 
-const isAuthentication = ref(JSON.parse(localStorage.getItem('isAuthenticated') || 'false'))
+const isAuthenticated = ref(false);
+const isAdmin = ref(false);
 
 export function useAuthentication() {
-  const router = useRouter()
-
-  const setAuthentication = (value) => {
-    isAuthentication.value = value
-    localStorage.setItem('isAuthenticated', JSON.stringify(value))
-  }
+  const setAuthStatus = (status, adminStatus = false) => {
+    isAuthenticated.value = status;
+    isAdmin.value = adminStatus;
+  };
 
   const logout = () => {
-    isAuthentication.value = false
-    localStorage.removeItem('isAuthenticated')
-    localStorage.removeItem('currentUser') // Clear any other related data
-    // Add any additional logout logic here (e.g., redirecting to login)
-    router.push('/login') // Redirect to login page after logout
-  }
+    isAuthenticated.value = false;
+    isAdmin.value = false;
+  };
 
   return {
-    isAuthentication,
-    setAuthentication,
+    isAuthenticated,
+    isAdmin,
+    setAuthStatus,
     logout
-  }
+  };
 }
