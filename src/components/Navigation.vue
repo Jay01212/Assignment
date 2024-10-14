@@ -1,52 +1,33 @@
 <template>
-  <nav class="navigation navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand logo" href="/">MyMentalHealth.com</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav nav-center me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <router-link to="/" class="nav-link" active-class="active">Home</router-link>
-          </li>
-          <li class="nav-item">
-            <a @click="handleNavClick('/about')" class="nav-link"
-              :class="{ active: $route.path === '/about' }">About</a>
-          </li>
-          <li class="nav-item">
-            <a @click="handleNavClick('/resources')" class="nav-link"
-              :class="{ active: $route.path === '/resources' }">Resources</a>
-          </li>
-          <li class="nav-item">
-            <a @click="handleNavClick('/community')" class="nav-link"
-              :class="{ active: $route.path === '/community' }">Community</a>
-          </li>
-          <li class="nav-item">
-            <a @click="handleNavClick('/emergency')" class="nav-link"
-              :class="{ active: $route.path === '/emergency' }">Emergency Help</a>
-          </li>
-          <li class="nav-item">
-            <router-link to="/Events" class="nav-link" active-class="active">Events</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/Map" class="nav-link" active-class="active">Map</router-link>
-          </li>
-        </ul>
-
-        <ul class="navbar-nav nav-right">
-          <li v-if="!isAuthenticated" class="nav-item">
-            <router-link to="/Firelogin" class="nav-link" active-class="active">Login</router-link>
-          </li>
-          <li v-else class="nav-item">
-            <a @click="handleLogout" class="nav-link" href="#">Logout</a>
-          </li>
-          <li v-if="!isAuthenticated" class="nav-item">
-            <router-link to="/FireRegister" class="nav-link" active-class="active">Firebase Register</router-link>
-          </li>
-        </ul>
-      </div>
+  <nav class="navigation">
+    <a class="logo" href="/">MyMentalHealth.com</a>
+    <button class="navbar-toggler" type="button" @click="toggleMenu" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div :class="['nav-items', { 'show': isMenuOpen }]">
+      <ul class="nav-center">
+        <li class="nav-item"><router-link to="/" class="nav-link" active-class="active">Home</router-link></li>
+        <li class="nav-item"><a @click="handleNavClick('/about')" class="nav-link"
+            :class="{ active: $route.path === '/about' }">About</a></li>
+        <li class="nav-item"><a @click="handleNavClick('/resources')" class="nav-link"
+            :class="{ active: $route.path === '/resources' }">Resources</a></li>
+        <li class="nav-item"><a @click="handleNavClick('/community')" class="nav-link"
+            :class="{ active: $route.path === '/community' }">Community</a></li>
+        <li class="nav-item"><a @click="handleNavClick('/emergency')" class="nav-link"
+            :class="{ active: $route.path === '/emergency' }">Emergency Help</a></li>
+        <li class="nav-item"><router-link to="/Events" class="nav-link" active-class="active">Events</router-link>
+        </li>
+        <li class="nav-item"><router-link to="/Map" class="nav-link" active-class="active">Map</router-link></li>
+      </ul>
+      <ul class="nav-right">
+        <li v-if="!isAuthentication" class="nav-item"><router-link to="/login" class="nav-link"
+            active-class="active">Login</router-link></li>
+        <li v-else class="nav-item"><button @click="logout" class="nav-link btn btn-link">Logout</button></li>
+        <li class="nav-item"><router-link to="/Firelogin" class="nav-link" active-class="active">Firebase
+            Login</router-link></li>
+        <li class="nav-item"><router-link to="/FireRegister" class="nav-link" active-class="active">Firebase
+            Register</router-link></li>
+      </ul>
     </div>
   </nav>
 </template>
